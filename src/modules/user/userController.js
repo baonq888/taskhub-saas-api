@@ -1,4 +1,4 @@
-import UserService from "./userService";
+import UserService from "./userService.js";
 
 class UserController {
   static async getUserDetails(req, res) {

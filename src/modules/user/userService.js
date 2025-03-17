@@ -1,5 +1,5 @@
-import UserDetailDTO from "./dto/UserDetailDTO";
-import UserDetailRepository from "./UserDetailRepository";
+import UserDetailDTO from "./dto/UserDetailDTO.js";
+import UserDetailRepository from "./UserDetailRepository.js";
 
 class UserService {
   static async getUserDetails(userId) {

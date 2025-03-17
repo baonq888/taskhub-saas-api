@@ -7,27 +7,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String @id @default(uuid())
-  email    String @unique
-  password String
-  role     Role    @default(USER)  
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String   @unique
   createdAt DateTime @default(now())
-  userDetail UserDetail?
+  users     TenantUser[]
+}
 
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)  
+  createdAt DateTime @default(now())
+  tenants   TenantUser[]
+  userDetail UserDetail?
+  refreshTokens RefreshToken[]
+}
+
+model TenantUser {
+  userId   String
+  tenantId String
+  role     Role     @default(USER) 
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@id([userId, tenantId])
 }
 
 model UserDetail {
-  id        String @id @default(uuid())
-  userId    String @unique
-  user      User   @relation(fields: [userId], references: [id])
+  id        String  @id @default(uuid())
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id])
   firstName String?
   lastName  String?
   phone     String?
   address   String?
 }
 
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
 enum Role {
   USER
   ADMIN
+  TENANT_ADMIN
 }

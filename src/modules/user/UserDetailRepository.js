@@ -1,4 +1,4 @@
-import prisma from "../../core/db/index";
+import prisma from "../../core/db/index.js";
 
 class UserRepository {
   static async getUserWithDetails(userId) {

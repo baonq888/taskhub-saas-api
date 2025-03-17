@@ -1,6 +1,6 @@
 import { hash, compare } from "bcryptjs";
-import { sign } from "jsonwebtoken";
-import UserRepository from "./UserRepository";
+import UserRepository from "./UserRepository.js";
+import JwtUtil from "../../core/utils/JwtUtil.js";
 
 class AuthService {
   static async registerUser(email, password) {
@@ -14,11 +14,35 @@ class AuthService {
       throw new Error("Invalid credentials");
     }
 
-    return sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    // Generate tokens
+    const accessToken = JwtUtil.generateAccessToken(user);
+    const refreshToken = JwtUtil.generateRefreshToken(user);
+
+    // Store refresh token in DB
+    await UserRepository.storeRefreshToken(user.id, refreshToken);
+
+    return { accessToken, refreshToken };
+  }
+
+  static async refreshAccessToken(refreshToken) {
+    try {
+      const decoded = JwtUtil.verifyRefreshToken(refreshToken);
+      const storedToken = await UserRepository.findRefreshToken(decoded.id, refreshToken);
+
+      if (!storedToken) throw new Error("Invalid or expired refresh token");
+
+      const user = await UserRepository.findUserById(decoded.id);
+      if (!user) throw new Error("User not found");
+
+      // Generate new access token
+      return JwtUtil.generateAccessToken(user);
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  static async logoutUser(userId, refreshToken) {
+    return await UserRepository.deleteRefreshToken(userId, refreshToken);
   }
 }
 
