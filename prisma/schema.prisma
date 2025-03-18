@@ -12,6 +12,8 @@ model Tenant {
   name      String   @unique
   createdAt DateTime @default(now())
   users     TenantUser[]
+  projects  Project[]
+
 }
 
 model User {
@@ -23,6 +25,7 @@ model User {
   tenants   TenantUser[]
   userDetail UserDetail?
   refreshTokens RefreshToken[]
+  assignedTasks Task[] @relation("UserTasks") 
 }
 
 model TenantUser {
@@ -44,6 +47,52 @@ model UserDetail {
   lastName  String?
   phone     String?
   address   String?
+}
+
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  tenantId  String
+  createdAt DateTime @default(now())
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  boards    Board[]
+
+  @@unique([name, tenantId])
+}
+
+model Board {
+  id         String   @id @default(uuid())
+  name       String
+  projectId  String
+  createdAt  DateTime @default(now())
+
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks      Task[]
+
+  @@unique([name, projectId])
+}
+
+model Task {
+  id         String   @id @default(uuid())
+  title      String
+  description String?
+  boardId    String
+  assignedTo String?  
+  status     TaskStatus @default(TODO)
+  createdAt  DateTime @default(now())
+
+  board      Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  assignee   User?    @relation(fields: [assignedTo], references: [id], onDelete: SetNull, name: "UserTasks")
+
+  @@unique([title, boardId])
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
 }
 
 model RefreshToken {

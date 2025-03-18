@@ -28,9 +28,22 @@ class TenantRepository {
   }
 
   static async inviteUser(tenantId, email, role = "USER") {
+    // Find the user by email
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new Error("User not found");
-
+  
+    // Check if the user is already in the tenant
+    const existingTenantUser = await prisma.tenantUser.findUnique({
+      where: {
+        userId_tenantId: { userId: user.id, tenantId }, // Composite primary key
+      },
+    });
+  
+    if (existingTenantUser) {
+      throw new Error("User is already a member of this tenant");
+    }
+  
+    // Add the user to the tenant
     return await prisma.tenantUser.create({
       data: {
         tenantId,
@@ -46,6 +59,27 @@ class TenantRepository {
         users: { include: { user: true } },
       },
     });
+  }
+
+  async getUsersByTenant(tenantId) {
+    return prisma.tenantUser.findMany({
+      where: { tenantId },
+      include: { user: true },
+    });
+  }
+
+  async getUserTenants(userId) {
+    return prisma.tenantUser.findMany({
+      where: { userId },
+      include: { tenant: true },
+    });
+  }
+
+  async isTenantAdmin(userId, tenantId) {
+    const tenantUser = await prisma.tenantUser.findFirst({
+      where: { userId, tenantId, role: "TENANT_ADMIN" },
+    });
+    return !!tenantUser; // Returns true if user is a Tenant Admin, else false
   }
 }
 
