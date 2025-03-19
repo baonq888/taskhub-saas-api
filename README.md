@@ -1,9 +1,9 @@
-# TaskHub SaaS API 🚀
+# TaskHub SaaS API
 
 **A scalable multi-tenant SaaS API built with Node.js, PostgreSQL, and Redis.**  
 TaskHub is a **Jira/Trello-like** project management system designed for **multi-tenancy** with a shared database architecture. It provides powerful task and project management features while ensuring tenant isolation and performance optimization.
 
-## 🛠️ Tech Stack
+## Tech Stack
 - **Backend:** Node.js (Express)
 - **Database:** PostgreSQL (Row-Level Security for multi-tenancy)
 - **Cache & Queues:** Redis (Rate limiting, job queues, caching)
@@ -11,7 +11,7 @@ TaskHub is a **Jira/Trello-like** project management system designed for **multi
 - **Message Broker:** Kafka (for async processing & event-driven architecture)
 - **Storage:** Firebase Storage (for file uploads)
 
-## 🔥 Features
+## Features
 ✅ Multi-Tenant Architecture (Shared DB, Row-Level Security)  
 ✅ Project & Task Management (Boards, Lists, Cards)  
 ✅ Role-Based Access Control (RBAC)  
@@ -20,7 +20,7 @@ TaskHub is a **Jira/Trello-like** project management system designed for **multi
 ✅ API Rate Limiting & Caching  
 ✅ File Uploads via Firebase Storage  
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### 1️⃣ Clone the repository
 ```sh
@@ -55,16 +55,16 @@ npm run migrate
 npm start
 ```
 
-## 📌 Roadmap
+## Roadmap
 - [ ] Integrate WebSockets for real-time updates
 - [ ] Implement GraphQL support
 - [ ] Add third-party integrations (Slack, GitHub, etc.)
 - [ ] AI-powered task recommendations
 
-## 🤝 Contributing
+## Contributing
 Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
 
-## 📜 License
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
