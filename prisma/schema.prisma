@@ -75,18 +75,22 @@ model Board {
 }
 
 model Task {
-  id         String   @id @default(uuid())
-  title      String
+  id          String     @id @default(uuid())
+  title       String
   description String?
-  boardId    String
-  assignedTo String?  
-  status     TaskStatus @default(TODO)
-  createdAt  DateTime @default(now())
+  boardId     String
+  assignedTo  String?  
+  status      TaskStatus @default(TODO)
+  createdAt   DateTime   @default(now())
+  deadline    DateTime? 
 
   board      Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
   assignee   User?    @relation(fields: [assignedTo], references: [id], onDelete: SetNull, name: "UserTasks")
 
   @@unique([title, boardId])
+  @@index([deadline])
+  @@index([status])     
+  @@index([assignedTo]) 
 }
 
 enum TaskStatus {
