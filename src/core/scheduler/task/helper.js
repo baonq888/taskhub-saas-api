@@ -9,11 +9,11 @@ async function getAllTasksBeforeDeadline() {
     const targetDate = subDays(today, DAYS_BEFORE_DEADLINE);
     return await prisma.task.findMany({
         where: {
-        deadline: {
-            gte: startOfDay(targetDate), // Start of the target day
-            lte: endOfDay(targetDate),   // End of the target day
-        },
-        assignedTo: { not: null }, 
+            deadline: {
+                gte: startOfDay(targetDate), // Start of the target day
+                lte: endOfDay(targetDate),   // End of the target day
+            },
+            assignedTo: { not: null }, 
         },
         include: {
         assignee: { select: { id: true, email: true } }, 
