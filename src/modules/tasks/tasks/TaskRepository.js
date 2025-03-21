@@ -28,6 +28,8 @@ class TaskRepository {
     return prisma.task.delete({ where: { id } });
   }
 
+  
+
 }
 
 export default new TaskRepository();

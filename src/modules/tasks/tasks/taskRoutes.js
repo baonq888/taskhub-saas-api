@@ -7,7 +7,6 @@ const router = express.Router();
 
 router.post("/", TaskController.createTask);
 router.patch("/assign", authMiddleware, roleMiddleware["TENANT_ADMIN"], TaskController.assignTask);
-
 router.get("/:id", TaskController.getTaskById);
 router.get("/", TaskController.getAllTasks);
 router.put("/:id", TaskController.updateTask);

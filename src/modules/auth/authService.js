@@ -34,7 +34,6 @@ class AuthService {
       const user = await UserRepository.findUserById(decoded.id);
       if (!user) throw new Error("User not found");
 
-      // Generate new access token
       return JwtUtil.generateAccessToken(user);
     } catch (error) {
       throw new Error(error.message);

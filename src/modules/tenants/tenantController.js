@@ -4,7 +4,7 @@ class TenantController {
   static async createTenant(req, res) {
     try {
       const { name } = req.body;
-      const userId = req.user.id; // Authenticated user
+      const userId = req.user.id; 
 
       const tenant = await TenantService.createTenant(userId, name);
       res.status(201).json({ message: "Tenant created", tenant });

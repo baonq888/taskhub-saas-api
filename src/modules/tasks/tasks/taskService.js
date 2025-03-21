@@ -41,6 +41,7 @@ class TaskService {
   async deleteTask(id) {
     return TaskRepository.deleteTask(id);
   }
+  
 }
 
 export default new TaskService();

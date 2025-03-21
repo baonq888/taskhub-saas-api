@@ -1,11 +1,20 @@
-// import prisma from "../../../core/db/index.js";
+import { getTasksBeforeDeadline } from "./helper.js";
+import NotificationService from "../../notifications/notificationService.js";
 
-// const DAYS_BEFORE_DEADLINE = 3
+class DeadlineScheduler {
+  static async notifyDeadline() {
+    const tasks = await getTasksBeforeDeadline();
 
-class DeadlineSchdeduler {
-    static async notifyDeadline() {
-        // Optimize for finding task 3 days before deadline
+    for (const task of tasks) {
+      if (task.assignee?.id) {
+        await NotificationService.sendNotification(
+          task.assignee.id,
+          `Reminder: Your task "${task.title}" is due soon!`,
+          "TASK_DEADLINE"
+        );
+      }
     }
+  }
 }
 
-export default DeadlineSchdeduler
+export default DeadlineScheduler;
