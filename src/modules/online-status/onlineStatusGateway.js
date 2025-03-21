@@ -1,6 +1,6 @@
 import authMiddlewareSocket from "../../core/middleware/authMiddlewareSocket.js";
 
-const onlineUsersByProject = {}; // { projectId: Set(userId) }
+const onlineUsersByProject = {}; // structure: { projectId: Set(userId) }
 
 function setupOnlineStatus(io) {
     const presenceNamespace = io.of("/presence");

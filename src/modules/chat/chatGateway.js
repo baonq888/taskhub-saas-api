@@ -1,6 +1,6 @@
 import authMiddlewareSocket from "../../core/middleware/authMiddlewareSocket.js";
 
-const projectChats = {}; // { projectId: [{ userId, message, timestamp }] }
+const projectChats = {}; // structure: { projectId: [{ userId, message, timestamp }] }
 
 function setupChat(io) {
     const chatNamespace = io.of("/chat");
