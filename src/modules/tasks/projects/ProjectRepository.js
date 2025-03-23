@@ -1,25 +1,52 @@
 import prisma from "../../../core/db/index.js";
 
 class ProjectRepository {
-  async createProject(data) {
+  static async createProject(data) {
     return prisma.project.create({ data });
   }
 
-  async getProjectById(id) {
+  static async getProjectById(id) {
     return prisma.project.findUnique({ where: { id } });
   }
 
-  async getAllProjects() {
+  static async getAllProjects() {
     return prisma.project.findMany();
   }
 
-  async updateProject(id, data) {
+  static async updateProject(id, data) {
     return prisma.project.update({ where: { id }, data });
   }
 
-  async deleteProject(id) {
+  static async deleteProject(id) {
     return prisma.project.delete({ where: { id } });
+  }
+  static async inviteUserToProject(projectId, userId) {
+    // Find project
+    const project = await this.getProjectById(projectId);
+    if (!project) throw new Error("Project not found");
+
+    // Check if user exists
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+
+    // Check if user is already in the tenant
+    const tenantUser = await prisma.tenantUser.findUnique({
+      where: { userId_tenantId: { userId, tenantId: project.tenantId } },
+    });
+
+    if (!tenantUser) {
+      // Add user to the tenant
+      await prisma.tenantUser.create({
+        data: {
+          userId,
+          tenantId: project.tenantId,
+          role: "USER", // Default role
+        },
+      });
+    }
+
+    return { message: "User invited to project successfully" };
   }
 }
 
-export default new ProjectRepository();
+export default ProjectRepository;
