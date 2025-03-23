@@ -32,6 +32,8 @@ model User {
   ChatParticipant ChatParticipant[]
 
   Message Message[]
+
+  ProjectUser ProjectUser[]
 }
 
 model TenantUser {
@@ -67,6 +69,20 @@ model Project {
 
   @@unique([name, tenantId])
   ChatRoom ChatRoom[]
+  ProjectUser ProjectUser[]
+}
+
+model ProjectUser {
+  userId    String
+  projectId String
+  role      Role @default(USER) // Optional: Define roles within projects
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  joinedAt  DateTime @default(now())
+
+  @@id([userId, projectId])
 }
 
 model Board {
