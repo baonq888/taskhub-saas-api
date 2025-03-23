@@ -1,6 +1,9 @@
 import ProjectRepository from "./ProjectRepository.js";
 import ChatRoomService from "../../chat/chatRoom/chatRoomService.js";
 import ChatParticipantService from "../../chat/chatParticipant/chatParticipantService.js";
+import UserService from "../../user/userService.js";
+import TenantService from "../../tenants/tenantService.js";
+
 class ProjectService {
   static async createProject(data) {
     // Create project
@@ -27,19 +30,42 @@ class ProjectService {
   static async deleteProject(id) {
     return ProjectRepository.deleteProject(id);
   }
-  static async inviteUserToProject(projectId, userId) {
-    // Invite user to project (handled in the repository)
-    await ProjectRepository.inviteUserToProject(projectId, userId);
-
-    // Add user to chat room participants
-    const chatRoom = await ChatRoomService.getChatRoomByProject(projectId);
-
-    if (chatRoom) {
-      await ChatParticipantService.addUserToChatRoom(chatRoom.id, userId);
-    }
-
-    return { message: "User invited to project and added to chat room" };
+ 
+static async inviteUserToProject(projectId, userId) {
+  // Check if project exists
+  const project = await ProjectRepository.getProjectById(projectId);
+  if (!project) {
+    throw new Error("Project not found");
   }
+
+  // Check if user exists
+  const user = await UserService.getUserDetails(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Check if user is already in the tenant
+  const tenant = await TenantService.getTenant(project.tenantId);
+  if (!tenant) {
+    throw new Error("Tenant not found");
+  }
+
+  const tenantUser = tenant.users.find((u) => u.id === userId);
+  if (!tenantUser) {
+    throw new Error("User is not a member of the tenant");
+  }
+
+  // Invite user to project
+  await ProjectRepository.inviteUserToProject(projectId, userId);
+
+  // Add user to chat room participants
+  const chatRoom = await ChatRoomService.getChatRoomByProject(projectId);
+  if (chatRoom) {
+    await ChatParticipantService.addUserToChatRoom(chatRoom.id, userId);
+  }
+
+  return { message: "User invited to project and added to chat room" };
+}
 }
 
 export default ProjectService;

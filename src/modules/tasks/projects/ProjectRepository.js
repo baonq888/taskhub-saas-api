@@ -20,33 +20,15 @@ class ProjectRepository {
   static async deleteProject(id) {
     return prisma.project.delete({ where: { id } });
   }
-  static async inviteUserToProject(projectId, userId) {
-    // Find project
-    const project = await this.getProjectById(projectId);
-    if (!project) throw new Error("Project not found");
-
-    // Check if user exists
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new Error("User not found");
-
-    // Check if user is already in the tenant
-    const tenantUser = await prisma.tenantUser.findUnique({
-      where: { userId_tenantId: { userId, tenantId: project.tenantId } },
-    });
-
-    if (!tenantUser) {
-      // Add user to the tenant
-      await prisma.tenantUser.create({
-        data: {
-          userId,
-          tenantId: project.tenantId,
-          role: "USER", // Default role
-        },
-      });
-    }
-
-    return { message: "User invited to project successfully" };
-  }
+  static async inviteUserToProject(projectId, userId, role = "USER") {
+    return prisma.projectUser.create({
+      data: {
+        projectId,
+        userId,
+        role,
+      },
+    })}
+    
 }
 
 export default ProjectRepository;
