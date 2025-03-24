@@ -1,7 +1,7 @@
 import TaskService from "./taskService.js";
 
 class TaskController {
-  async createTask(req, res) {
+  static async createTask(req, res) {
     try {
       const task = await TaskService.createTask(req.body);
       res.status(201).json(task);
@@ -10,7 +10,7 @@ class TaskController {
     }
   }
 
-  async assignTask(req, res) {
+  static async assignTask(req, res) {
     try {
       const { taskId, userId } = req.body;
       const adminUserId = req.user.id;
@@ -22,7 +22,7 @@ class TaskController {
     }
   }
 
-  async getTaskById(req, res) {
+  static async getTaskById(req, res) {
     try {
       const task = await TaskService.getTaskById(req.params.id);
       res.status(200).json(task);
@@ -31,7 +31,7 @@ class TaskController {
     }
   }
 
-  async getAllTasks(req, res) {
+  static async getAllTasks(req, res) {
     try {
       const tasks = await TaskService.getAllTasks();
       res.status(200).json(tasks);
@@ -40,7 +40,7 @@ class TaskController {
     }
   }
 
-  async updateTask(req, res) {
+  static async updateTask(req, res) {
     try {
       const task = await TaskService.updateTask(req.params.id, req.body);
       res.status(200).json(task);
@@ -49,7 +49,7 @@ class TaskController {
     }
   }
 
-  async deleteTask(req, res) {
+  static async deleteTask(req, res) {
     try {
       await TaskService.deleteTask(req.params.id);
       res.status(204).send();
@@ -59,4 +59,4 @@ class TaskController {
   }
 }
 
-export default new TaskController();
+export default TaskController;

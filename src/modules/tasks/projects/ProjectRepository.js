@@ -20,6 +20,7 @@ class ProjectRepository {
   static async deleteProject(id) {
     return prisma.project.delete({ where: { id } });
   }
+
   static async inviteUserToProject(projectId, userId, role = "USER") {
     return prisma.projectUser.create({
       data: {
@@ -27,7 +28,29 @@ class ProjectRepository {
         userId,
         role,
       },
-    })}
+  })}
+
+  static async promoteUserToProjectAdmin(projectId, userId) {
+    
+    // Update the user's role in the project
+    await prisma.projectUser.update({
+      where: {
+        userId_projectId: { userId, projectId },
+      },
+      data: {
+        role: "PROJECT_ADMIN",
+      },
+    }); 
+      
+  }
+
+  static async getProjectUser(projectId, userId) {
+    await prisma.projectUser.findUnique({
+      where: {
+        userId_projectId: { userId, projectId },
+      },
+    });
+  }
     
 }
 

@@ -1,25 +1,25 @@
 import BoardRepository from "./BoardRepository.js";
 
 class BoardService {
-  async createProject(data) {
+  static async createProject(data) {
     return BoardRepository.createBoard(data);
   }
 
-  async getBoardById(id) {
+  static  async getBoardById(id) {
     return BoardRepository.getBoardById(id);
   }
 
-  async getAllBoards() {
+  static async getAllBoards() {
     return BoardRepository.getAllBoards();
   }
 
-  async updateBoard(id, data) {
+  static async updateBoard(id, data) {
     return BoardRepository.updateBoard(id, data);
   }
 
-  async deleteBoard(id) {
+  static async deleteBoard(id) {
     return BoardRepository.deleteBoard(id);
   }
 }
 
-export default new BoardService();
+export default BoardService;

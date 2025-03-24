@@ -2,11 +2,11 @@ import TaskRepository from "./TaskRepository.js";
 import TenantRepository from "../../tenants/TenantRepository.js";
 
 class TaskService {
-  async createTask(data) {
+  static async createTask(data) {
     return TaskRepository.createTask(data);
   }
 
-  async assignTask(taskId, assignedUserId, adminUserId) {
+  static async assignTask(taskId, assignedUserId, adminUserId) {
     // Get tenant of the assigned user
     const userTenants = await TenantRepository.getUserTenants(assignedUserId);
     
@@ -26,22 +26,22 @@ class TaskService {
     return TaskRepository.assignTask(taskId, assignedUserId);
   }
 
-  async getTaskById(id) {
+  static async getTaskById(id) {
     return TaskRepository.getTaskById(id);
   }
 
-  async getAllTasks() {
+  static async getAllTasks() {
     return TaskRepository.getAllTasks();
   }
 
-  async updateTask(id, data) {
+  static async updateTask(id, data) {
     return TaskRepository.updateTask(id, data);
   }
 
-  async deleteTask(id) {
+  static async deleteTask(id) {
     return TaskRepository.deleteTask(id);
   }
   
 }
 
-export default new TaskService();
+export default TaskService;
