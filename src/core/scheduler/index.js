@@ -8,9 +8,12 @@ class CronJobs {
     console.log("Starting scheduled tasks...");
 
     cron.schedule(DAILY_CRON_SCHEDULE, async () => {
+      
       console.log("Running task deadline notification job...");
       await DeadlineScheduler.notifyDeadline();
       console.log("Task deadline notifications sent.");
+
+
     });
 
     console.log("Cron jobs scheduled successfully.");

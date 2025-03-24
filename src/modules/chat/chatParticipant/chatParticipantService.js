@@ -1,7 +1,7 @@
 import ChatParticipantRepository from "./ChatParticipantRepository.js";
 
 class ChatParticipantService {
-  async addUserToChatRoom(chatRoomId, userId) {
+  static async addUserToChatRoom(chatRoomId, userId) {
     if (chatRoomId) {
       return await ChatParticipantRepository.addParticipant(chatRoomId, userId);
     }
@@ -9,4 +9,4 @@ class ChatParticipantService {
   }
 }
 
-export default new ChatParticipantService();
+export default ChatParticipantService;

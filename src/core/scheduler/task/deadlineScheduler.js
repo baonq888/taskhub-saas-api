@@ -5,17 +5,17 @@ class DeadlineScheduler {
   static async notifyDeadline() {
     const tasks = await getTasksBeforeDeadline();
 
-    for (const task of tasks) {
-      if (task.assignee?.id) {
-        const notificationMessage = {
+    const promises = tasks
+      .filter((task) => task.assignee?.id)
+      .map((task) => 
+        publishToQueue("notifications_queue", {
           userId: task.assignee.id,
           message: `Reminder: Your task "${task.title}" is due soon!`,
           type: "TASK_DEADLINE",
-        };
+        })
+      );
 
-        await publishToQueue("notifications_queue", notificationMessage);
-      }
-    }
+    await Promise.all(promises); 
   }
 }
 

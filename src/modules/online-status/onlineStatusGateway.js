@@ -1,6 +1,8 @@
 import authMiddlewareSocket from "../../core/middleware/authMiddlewareSocket.js";
+import Redis from "ioredis";
 
-const onlineUsersByProject = {}; // structure: { projectId: Set(userId) }
+const redis = new Redis();
+const onlineUsersKey = (projectId) => `onlineUsers:${projectId}`;
 
 function setupOnlineStatus(io) {
     const presenceNamespace = io.of("/presence");
@@ -11,22 +13,22 @@ function setupOnlineStatus(io) {
         const userId = socket.user.id;
         let projectId;
 
-        socket.on("join_project", ({ projectId: projId }) => {
+        socket.on("join_project", async ({ projectId: projId }) => {
             projectId = projId;
             socket.join(projectId);
 
-            if (!onlineUsersByProject[projectId]) {
-                onlineUsersByProject[projectId] = new Set();
-            }
-            onlineUsersByProject[projectId].add(userId);
+            await redis.sadd(onlineUsersKey(projectId), userId);
+            const users = await redis.smembers(onlineUsersKey(projectId));
 
-            presenceNamespace.to(projectId).emit("user_online", Array.from(onlineUsersByProject[projectId]));
+            presenceNamespace.to(projectId).emit("user_online", users);
         });
 
-        socket.on("disconnect", () => {
+        socket.on("disconnect", async () => {
             if (projectId) {
-                onlineUsersByProject[projectId]?.delete(userId);
-                presenceNamespace.to(projectId).emit("user_online", Array.from(onlineUsersByProject[projectId]));
+                await redis.srem(onlineUsersKey(projectId), userId);
+                const users = await redis.smembers(onlineUsersKey(projectId));
+
+                presenceNamespace.to(projectId).emit("user_online", users);
             }
         });
     });

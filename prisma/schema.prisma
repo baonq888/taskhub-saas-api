@@ -134,7 +134,9 @@ model RefreshToken {
 enum Role {
   USER
   ADMIN
+  TENANT_MEMBER
   TENANT_ADMIN
+  PROJECT_MEMBER
   PROJECT_ADMIN
 }
 

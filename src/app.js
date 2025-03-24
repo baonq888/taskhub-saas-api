@@ -7,7 +7,7 @@ import tenantRoutes from "./modules/tenants/tenantRoutes.js";
 import projectRoutes from "./modules/tasks/projects/projectRoutes.js";
 import boardRoutes from "./modules/tasks/boards/boardRoutes.js";
 import taskRoutes from "./modules/tasks/tasks/taskRoutes.js";
-
+import chatRoutes from "./modules/chat/chatRoutes.js";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -28,6 +28,7 @@ app.use(`${API_VERSION}/tenants`, tenantRoutes);
 app.use(`${API_VERSION}/projects`, projectRoutes);
 app.use(`${API_VERSION}/boards`, boardRoutes);
 app.use(`${API_VERSION}/tasks`, taskRoutes);
+app.use(`${API_VERSION}/chat`, chatRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Taskly API is running!" });
