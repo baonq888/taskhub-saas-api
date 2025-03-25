@@ -2,18 +2,37 @@ import prisma from "../../core/db/index.js";
 
 class TenantRepository {
   static async createTenant(name, userId) {
-    return await prisma.tenant.create({
-      data: {
-        name,
-        users: {
-          create: {
-            userId,
-            role: "TENANT_ADMIN",
-          },
+    return await prisma.$transaction(async (tx) => {
+      const tenant = await tx.tenant.create({
+        data: { name },
+      });
+
+      await tx.tenantUser.create({
+        data: {
+          tenantId: tenant.id,
+          userId,
+          role: "TENANT_OWNER",
         },
+      });
+
+      return tenant;
+    });
+  }
+
+  static async updateTenantUserRole(tenantId, userId, newRole) {
+    // Ensure the new role is valid
+    const validRoles = ["TENANT_MEMBER", "TENANT_ADMIN", "TENANT_OWNER"];
+    if (!validRoles.includes(newRole)) {
+      throw new Error("Invalid role");
+    }
+
+    // Update the role of the user in the tenant
+    return await prisma.tenantUser.update({
+      where: {
+        userId_tenantId: { userId, tenantId },
       },
-      include: {
-        users: { include: { user: true } }, 
+      data: {
+        role: newRole,
       },
     });
   }

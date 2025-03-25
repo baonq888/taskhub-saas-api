@@ -44,6 +44,17 @@ class ProjectRepository {
       
   }
 
+  static async updateProjectUserRole(projectId, userId, newRole) {
+    return await prisma.projectUser.update({
+      where: {
+        userId_projectId: { userId, projectId },
+      },
+      data: {
+        role: newRole,
+      },
+    });
+  }
+
   static async getProjectUser(projectId, userId) {
     await prisma.projectUser.findUnique({
       where: {

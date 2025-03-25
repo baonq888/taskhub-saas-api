@@ -20,7 +20,6 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  role      Role     @default(USER)  
   createdAt DateTime @default(now())
   tenants   TenantUser[]
   userDetail UserDetail?
@@ -39,12 +38,18 @@ model User {
 model TenantUser {
   userId   String
   tenantId String
-  role     Role     @default(USER) 
+  role     TenantRole   @default(TENANT_MEMBER) 
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([userId, tenantId])
+}
+
+enum TenantRole {
+  TENANT_MEMBER
+  TENANT_ADMIN
+  TENANT_OWNER
 }
 
 model UserDetail {
@@ -75,7 +80,7 @@ model Project {
 model ProjectUser {
   userId    String
   projectId String
-  role      Role @default(USER) // Optional: Define roles within projects
+  role      ProjectRole @default(PROJECT_MEMBER) 
 
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -83,6 +88,12 @@ model ProjectUser {
   joinedAt  DateTime @default(now())
 
   @@id([userId, projectId])
+}
+
+enum ProjectRole {
+  PROJECT_MEMBER
+  PROJECT_ADMIN
+  PROJECT_OWNER
 }
 
 model Board {
@@ -131,14 +142,6 @@ model RefreshToken {
   expiresAt DateTime
 }
 
-enum Role {
-  USER
-  ADMIN
-  TENANT_MEMBER
-  TENANT_ADMIN
-  PROJECT_MEMBER
-  PROJECT_ADMIN
-}
 
 model Notification {
   id          String   @id @default(uuid())
