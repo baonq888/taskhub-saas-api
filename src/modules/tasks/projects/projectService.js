@@ -67,7 +67,7 @@ class ProjectService {
     return { message: "User invited to project and added to chat room" };
   }
 
-  static async promoteUserToProjectAdmin(tenantId, projectId, userId) {
+  static async updateProjectUserRole(tenantId, projectId, userId, newRole) {
     // Check if user exists
     const user = await UserService.getUserDetails(userId);
     if (!user) {
@@ -90,7 +90,7 @@ class ProjectService {
       throw new Error("User is not a member of the project");
     }
 
-    await ProjectRepository.promoteUserToProjectAdmin(projectId, userId)
+    await ProjectRepository.updateProjectUserRole(projectId, userId, newRole)
 
     
   }

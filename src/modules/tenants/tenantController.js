@@ -43,6 +43,18 @@ class TenantController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async updateTenantUserRole(req, res) {
+    try {
+      const { tenantId, userId } = req.params;
+      const { newRole } = req.body;
+
+      await TenantService.updateTenantUserRole(tenantId, userId, newRole);
+      res.status(200).json({ message: "User role updated successfully" });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
 
 export default TenantController;

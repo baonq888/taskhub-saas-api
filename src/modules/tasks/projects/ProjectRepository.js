@@ -30,19 +30,7 @@ class ProjectRepository {
       },
   })}
 
-  static async promoteUserToProjectAdmin(projectId, userId) {
-    
-    // Update the user's role in the project
-    await prisma.projectUser.update({
-      where: {
-        userId_projectId: { userId, projectId },
-      },
-      data: {
-        role: "PROJECT_ADMIN",
-      },
-    }); 
-      
-  }
+
 
   static async updateProjectUserRole(projectId, userId, newRole) {
     return await prisma.projectUser.update({
