@@ -5,17 +5,17 @@ TaskHub is a **Jira/Trello-like** project management system designed for **multi
 
 ## Tech Stack
 - **Backend:** Node.js (Express)
-- **Database:** PostgreSQL (Row-Level Security for multi-tenancy)
-- **Cache & Queues:** Redis (Rate limiting, job queues, caching)
+- **Database:** PostgreSQL 
+- **Cache & Queues:** Redis 
 - **Authentication:** JWT & OAuth2
-- **Message Broker:** Kafka (for async processing & event-driven architecture)
-- **Storage:** Firebase Storage (for file uploads)
+- **Message Broker:** RabbitMQ 
+- **Storage:** Firebase Storage
 
 ## Features
 ✅ Multi-Tenant Architecture (Shared DB, Row-Level Security)  
-✅ Project & Task Management (Boards, Lists, Cards)  
+✅ Project & Task Management (Projects, Boards, Tasks)  
 ✅ Role-Based Access Control (RBAC)  
-✅ Real-Time Updates (WebSockets + Redis Pub/Sub)  
+✅ Real-Time Updates (WebSockets)  
 ✅ Activity Logs & Notifications  
 ✅ API Rate Limiting & Caching  
 ✅ File Uploads via Firebase Storage  
