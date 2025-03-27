@@ -1,30 +1,30 @@
 import prisma from "../../../core/db/index.js";
 
 class TaskRepository {
-  async createTask(data) {
+  static async createTask(data) {
     return prisma.task.create({ data });
   }
 
-  async assignTask(taskId, userId) {
+  static async assignTask(taskId, userId) {
     return prisma.task.update({
       where: { id: taskId },
       data: { assignedTo: userId },
     });
   }
 
-  async getTaskById(id) {
+  static async getTaskById(id) {
     return prisma.task.findUnique({ where: { id } });
   }
 
-  async getAllTasks() {
+  static async getAllTasks() {
     return prisma.task.findMany();
   }
 
-  async updateTask(id, data) {
+  static async updateTask(id, data) {
     return prisma.task.update({ where: { id }, data });
   }
 
-  async deleteTask(id) {
+  static async deleteTask(id) {
     return prisma.task.delete({ where: { id } });
   }
 
@@ -32,4 +32,4 @@ class TaskRepository {
 
 }
 
-export default new TaskRepository();
+export default TaskRepository;

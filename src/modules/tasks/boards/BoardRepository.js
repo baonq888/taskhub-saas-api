@@ -1,25 +1,25 @@
 import prisma from "../../../core/db/index.js";
 
 class BoardRepository {
-  async createBoard(data) {
+  static async createBoard(data) {
     return prisma.board.create({ data });
   }
 
-  async getBoardById(id) {
+  static async getBoardById(id) {
     return prisma.board.findUnique({ where: { id } });
   }
 
-  async getAllBoards() {
+  static async getAllBoards() {
     return prisma.board.findMany();
   }
 
-  async updateBoard(id, data) {
+  static async updateBoard(id, data) {
     return prisma.board.update({ where: { id }, data });
   }
 
-  async deleteBoard(id) {
+  static async deleteBoard(id) {
     return prisma.board.delete({ where: { id } });
   }
 }
 
-export default new BoardRepository();
+export default BoardRepository;

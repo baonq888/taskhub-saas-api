@@ -1,7 +1,7 @@
 import ProjectService from "./projectService.js";
 
 class ProjectController {
-  async createProject(req, res) {
+  static async createProject(req, res) {
     try {
       const project = await ProjectService.createProject(req.body);
       res.status(201).json(project);
@@ -10,7 +10,7 @@ class ProjectController {
     }
   }
 
-  async getProjectById(req, res) {
+  static async getProjectById(req, res) {
     try {
       const project = await ProjectService.getProjectById(req.params.id);
       res.status(200).json(project);
@@ -19,7 +19,7 @@ class ProjectController {
     }
   }
 
-  async getAllProjects(req, res) {
+  static async getAllProjects(req, res) {
     try {
       const projects = await ProjectService.getAllProjects();
       res.status(200).json(projects);
@@ -28,7 +28,7 @@ class ProjectController {
     }
   }
 
-  async updateProject(req, res) {
+  static async updateProject(req, res) {
     try {
       const project = await ProjectService.updateProject(req.params.id, req.body);
       res.status(200).json(project);
@@ -37,7 +37,7 @@ class ProjectController {
     }
   }
 
-  async deleteProject(req, res) {
+  static async deleteProject(req, res) {
     try {
       await ProjectService.deleteProject(req.params.id);
       res.status(204).send();
@@ -45,6 +45,16 @@ class ProjectController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async inviteUserToProject(req, res) {
+    try {
+      const { projectId, userId } = req.body;
+      const result = await ProjectService.inviteUserToProject(projectId, userId);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
 }
 
-export default new ProjectController();
+export default ProjectController;

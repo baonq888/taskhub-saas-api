@@ -20,7 +20,6 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  role      Role     @default(USER)  
   createdAt DateTime @default(now())
   tenants   TenantUser[]
   userDetail UserDetail?
@@ -32,17 +31,25 @@ model User {
   ChatParticipant ChatParticipant[]
 
   Message Message[]
+
+  ProjectUser ProjectUser[]
 }
 
 model TenantUser {
   userId   String
   tenantId String
-  role     Role     @default(USER) 
+  role     TenantRole   @default(TENANT_MEMBER) 
 
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([userId, tenantId])
+}
+
+enum TenantRole {
+  TENANT_MEMBER
+  TENANT_ADMIN
+  TENANT_OWNER
 }
 
 model UserDetail {
@@ -67,6 +74,26 @@ model Project {
 
   @@unique([name, tenantId])
   ChatRoom ChatRoom[]
+  ProjectUser ProjectUser[]
+}
+
+model ProjectUser {
+  userId    String
+  projectId String
+  role      ProjectRole @default(PROJECT_MEMBER) 
+
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  joinedAt  DateTime @default(now())
+
+  @@id([userId, projectId])
+}
+
+enum ProjectRole {
+  PROJECT_MEMBER
+  PROJECT_ADMIN
+  PROJECT_OWNER
 }
 
 model Board {
@@ -115,11 +142,6 @@ model RefreshToken {
   expiresAt DateTime
 }
 
-enum Role {
-  USER
-  ADMIN
-  TENANT_ADMIN
-}
 
 model Notification {
   id          String   @id @default(uuid())

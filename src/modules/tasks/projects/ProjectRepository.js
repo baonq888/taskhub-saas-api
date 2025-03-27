@@ -1,25 +1,56 @@
 import prisma from "../../../core/db/index.js";
 
 class ProjectRepository {
-  async createProject(data) {
+  static async createProject(data) {
     return prisma.project.create({ data });
   }
 
-  async getProjectById(id) {
+  static async getProjectById(id) {
     return prisma.project.findUnique({ where: { id } });
   }
 
-  async getAllProjects() {
+  static async getAllProjects() {
     return prisma.project.findMany();
   }
 
-  async updateProject(id, data) {
+  static async updateProject(id, data) {
     return prisma.project.update({ where: { id }, data });
   }
 
-  async deleteProject(id) {
+  static async deleteProject(id) {
     return prisma.project.delete({ where: { id } });
   }
+
+  static async inviteUserToProject(projectId, userId, role = "USER") {
+    return prisma.projectUser.create({
+      data: {
+        projectId,
+        userId,
+        role,
+      },
+  })}
+
+
+
+  static async updateProjectUserRole(projectId, userId, newRole) {
+    return await prisma.projectUser.update({
+      where: {
+        userId_projectId: { userId, projectId },
+      },
+      data: {
+        role: newRole,
+      },
+    });
+  }
+
+  static async getProjectUser(projectId, userId) {
+    await prisma.projectUser.findUnique({
+      where: {
+        userId_projectId: { userId, projectId },
+      },
+    });
+  }
+    
 }
 
-export default new ProjectRepository();
+export default ProjectRepository;

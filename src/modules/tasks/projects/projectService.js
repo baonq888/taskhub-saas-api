@@ -1,25 +1,99 @@
 import ProjectRepository from "./ProjectRepository.js";
+import ChatRoomService from "../../chat/chatRoom/chatRoomService.js";
+import ChatParticipantService from "../../chat/chatParticipant/chatParticipantService.js";
+import UserService from "../../user/userService.js";
+import TenantService from "../../tenants/tenantService.js";
 
 class ProjectService {
-  async createProject(data) {
-    return ProjectRepository.createProject(data);
+  static async createProject(data) {
+    // Create project
+    const project = await ProjectRepository.createProject(data);
+
+    // Create a chat room for the project
+    await ChatRoomService.createChatRoomForProject(project.id);
+
+    return project;
   }
 
-  async getProjectById(id) {
+  static async getProjectById(id) {
     return ProjectRepository.getProjectById(id);
   }
 
-  async getAllProjects() {
+  static async getAllProjects() {
     return ProjectRepository.getAllProjects();
   }
 
-  async updateProject(id, data) {
+  static async updateProject(id, data) {
     return ProjectRepository.updateProject(id, data);
   }
 
-  async deleteProject(id) {
+  static async deleteProject(id) {
     return ProjectRepository.deleteProject(id);
+  }
+ 
+  static async inviteUserToProject(projectId, userId) {
+    // Check if project exists
+    const project = await ProjectRepository.getProjectById(projectId);
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    // Check if user exists
+    const user = await UserService.getUserDetails(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Check if user is already in the tenant
+    const tenant = await TenantService.getTenant(project.tenantId);
+    if (!tenant) {
+      throw new Error("Tenant not found");
+    }
+
+    const tenantUser = TenantService.getU;
+    if (!tenantUser) {
+      throw new Error("User is not a member of the tenant");
+    }
+
+    // Invite user to project
+    await ProjectRepository.inviteUserToProject(projectId, userId);
+
+    // Add user to chat room participants
+    const chatRoom = await ChatRoomService.getChatRoomByProject(projectId);
+    if (chatRoom) {
+      await ChatParticipantService.addUserToChatRoom(chatRoom.id, userId);
+    }
+
+    return { message: "User invited to project and added to chat room" };
+  }
+
+  static async updateProjectUserRole(tenantId, projectId, userId, newRole) {
+    // Check if user exists
+    const user = await UserService.getUserDetails(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Check if user is already in the tenant
+    const tenant = await TenantService.getTenant(tenantId);
+    if (!tenant) {
+      throw new Error("Tenant not found");
+    }
+
+    const tenantUser = await TenantService.getTenantUser(tenantId, userId)
+    if (!tenantUser) {
+      throw new Error("User is not a member of the tenant");
+    }
+
+    const projectUser = await ProjectRepository.getProjectUser(projectId, userId)
+    if (!projectUser) {
+      throw new Error("User is not a member of the project");
+    }
+
+    await ProjectRepository.updateProjectUserRole(projectId, userId, newRole)
+
+    
   }
 }
 
-export default new ProjectService();
+export default ProjectService;
