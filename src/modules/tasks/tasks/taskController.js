@@ -12,11 +12,24 @@ class TaskController {
 
   static async assignTask(req, res) {
     try {
-      const { taskId, userId } = req.body;
+      const { taskId } = req.params;
+      const { userIds } = req.body; // an array of userIds
       const adminUserId = req.user.id;
 
-      const task = await TaskService.assignTask(taskId, userId, adminUserId);
-      res.status(200).json({ message: "Task assigned successfully", task });
+      const taskAssignments = await TaskService.assignTask(taskId, userIds, adminUserId);
+      res.status(200).json({ message: "Task assigned successfully", taskAssignments });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  static async unassignTask(req, res) {
+    try {
+      const { taskId } = req.params;
+      const { userId } = req.body;
+
+      await TaskService.unassignTask(taskId, userId);
+      res.status(200).json({ message: "User unassigned from task successfully" });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

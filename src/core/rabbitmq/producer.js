@@ -1,7 +1,6 @@
 import amqplib from "amqplib";
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost";
-
+const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://user:password@rabbitmq";
 let connection;
 let channel;
 

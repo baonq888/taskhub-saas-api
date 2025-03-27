@@ -26,7 +26,7 @@ router.delete(
   ProjectController.deleteProject
 );
 router.post(
-  "/invite-user",
+  "/:id/invite",
   authMiddleware,
   roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
   ProjectController.inviteUserToProject

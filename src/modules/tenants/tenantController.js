@@ -26,7 +26,7 @@ class TenantController {
   static async inviteUser(req, res) {
     try {
       const { email } = req.body;
-      const { id: tenantId } = req.params;
+      const { tenantId } = req.params;
 
       await TenantService.inviteUser(tenantId, email);
       res.status(200).json({ message: "User invited" });

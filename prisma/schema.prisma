@@ -33,6 +33,8 @@ model User {
   Message Message[]
 
   ProjectUser ProjectUser[]
+
+  TaskAssignee TaskAssignee[]
 }
 
 model TenantUser {
@@ -125,6 +127,19 @@ model Task {
   @@index([deadline])
   @@index([status])     
   @@index([assignedTo]) 
+  TaskAssignee TaskAssignee[]
+}
+
+model TaskAssignee {
+  userId  String
+  taskId  String
+
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task    Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  assignedAt DateTime @default(now())
+
+  @@id([userId, taskId])
 }
 
 enum TaskStatus {
