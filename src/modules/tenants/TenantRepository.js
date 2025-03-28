@@ -20,11 +20,6 @@ class TenantRepository {
   }
 
   static async updateTenantUserRole(tenantId, userId, newRole) {
-    // Ensure the new role is valid
-    const validRoles = ["TENANT_MEMBER", "TENANT_ADMIN", "TENANT_OWNER"];
-    if (!validRoles.includes(newRole)) {
-      throw new Error("Invalid role");
-    }
 
     // Update the role of the user in the tenant
     return await prisma.tenantUser.update({
@@ -71,11 +66,7 @@ class TenantRepository {
 
 
   static async listTenants() {
-    return await prisma.tenant.findMany({
-      include: {
-        users: { include: { user: true } },
-      },
-    });
+    return await prisma.tenant.findMany();
   }
 
   static async getUsersByTenant(tenantId) {
