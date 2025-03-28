@@ -31,7 +31,7 @@ app.use(helmet());
 app.use(json()); 
 app.use(urlencoded({ extended: true })); 
 
-const API_VERSION = "/api/v1";
+const API_VERSION = "/api";
 
 app.use(`${API_VERSION}/auth`, authRoutes);
 app.use(`${API_VERSION}/users`, userRoutes);

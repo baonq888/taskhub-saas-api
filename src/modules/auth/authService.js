@@ -43,6 +43,7 @@ class AuthService {
   static async logoutUser(userId, refreshToken) {
     return await UserRepository.deleteRefreshToken(userId, refreshToken);
   }
+
 }
 
 export default AuthService;

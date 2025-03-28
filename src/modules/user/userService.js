@@ -9,8 +9,8 @@ class UserService {
     return new UserDetailDTO(user);
   }
 
-  static async getAllUsers(role) {
-    const users = await UserDetailRepository.getUsersByRole(role);
+  static async getAllUsers() {
+    const users = await UserDetailRepository.getAllUsers();
 
     return users.map((user) => new UserDetailDTO(user));
   }
