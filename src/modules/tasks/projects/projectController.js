@@ -48,7 +48,8 @@ class ProjectController {
 
   static async inviteUserToProject(req, res) {
     try {
-      const { projectId, userId } = req.body;
+      const { projectId } = req.params
+      const { userId } = req.body;
       const result = await ProjectService.inviteUserToProject(projectId, userId);
       res.status(200).json(result);
     } catch (error) {

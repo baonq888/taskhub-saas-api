@@ -3,20 +3,26 @@ import pkg from "jsonwebtoken";
 const { sign, verify } = pkg;
 
 class JwtUtil {
+  static ACCESS_TOKEN_EXPIRY = "5h"; 
+  static REFRESH_TOKEN_EXPIRY = "1d";
+
   static generateAccessToken(user) {
     return sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" } // Access token valid for 1 hour
+      { expiresIn: this.ACCESS_TOKEN_EXPIRY } 
     );
   }
 
   static generateRefreshToken(user) {
-    return sign(
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 1);
+    const token = sign(
       { id: user.id },
       process.env.JWT_REFRESH_SECRET,
-      { expiresIn: "7d" } // Refresh token valid for 7 days
+      { expiresIn: this.REFRESH_TOKEN_EXPIRY } 
     );
+    return { token, expiresAt };
   }
 
   static verifyAccessToken(token) {

@@ -20,24 +20,23 @@ class UserRepository {
     });
   }
 
-  static async getUsersByRole(role) {
+  static async getAllUsers() {
     return await prisma.user.findMany({
-      where: { role },
       select: {
         id: true,
         email: true,
-        createdAt: true,
         userDetail: {
           select: {
             firstName: true,
             lastName: true,
-            phone: true,
             address: true,
           },
         },
       },
     });
   }
+
+  
 }
 
 export default UserRepository;

@@ -10,7 +10,7 @@ const authMiddleware = async (req, res, next) => {
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
     const decoded = verify(token, process.env.JWT_SECRET);
-    req.user = { id: decoded.id, role: decoded.role };
+    req.user = { id: decoded.id };
 
     // Check if user roles are cached
     const cacheKey = `user_roles:${decoded.id}`;

@@ -29,6 +29,9 @@ class TenantService {
   }
 
   static async updateTenantUserRole(tenantId, userId, newRole) {
+    if (!["TENANT_MEMBER", "TENANT_ADMIN", "TENANT_OWNER"].includes(newRole)) {
+      throw new Error("Invalid role");
+    }
     return await TenantRepository.updateTenantUserRole(tenantId, userId, newRole);
   }
 }

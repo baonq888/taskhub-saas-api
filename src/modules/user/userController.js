@@ -22,8 +22,7 @@ class UserController {
 
   static async getAllUsers(req, res) {
     try {
-      const { role } = req.query; // Optional role-based filtering
-      const users = await UserService.getAllUsers(role);
+      const users = await UserService.getAllUsers();
       res.json(users);
     } catch (error) {
       res.status(500).json({ error: error.message });

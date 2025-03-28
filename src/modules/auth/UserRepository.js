@@ -22,6 +22,12 @@ class UserRepository {
     });
   }
 
+  static async findAllUsers() {
+    return await prisma.user.findMany({
+      include: { userDetail: true }, // Include related details if needed
+    });
+  }
+
   static async findUserByEmail(email) {
     return await prisma.user.findUnique({
       where: { email },
@@ -36,7 +42,7 @@ class UserRepository {
 
   static async storeRefreshToken(userId, refreshToken) {
     return await prisma.refreshToken.create({
-      data: { userId, token: refreshToken },
+      data: { userId, token: refreshToken.token, expiresAt: refreshToken.expiresAt},
     });
   }
 
