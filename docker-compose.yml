@@ -6,8 +6,8 @@ services:
     container_name: rabbitmq
     hostname: rabbitmq
     ports:
-      - "5672:5672"  # RabbitMQ AMQP protocol port
-      - "15672:15672" # RabbitMQ management UI
+      - "5672:5672" 
+      - "15672:15672" 
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: password
@@ -19,7 +19,7 @@ services:
     depends_on:
       - rabbitmq
     environment:
-      RABBITMQ_URL: "amqp://user:password@rabbitmq" # Connect using RabbitMQ service name
+      RABBITMQ_URL: "amqp://user:password@rabbitmq" 
     ports:
       - "3000:3000"
     restart: unless-stopped
