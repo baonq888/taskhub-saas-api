@@ -36,10 +36,10 @@ const API_VERSION = "/api";
 app.use(`${API_VERSION}/auth`, authRoutes);
 app.use(`${API_VERSION}/users`, userRoutes);
 app.use(`${API_VERSION}/tenants`, tenantRoutes);
-app.use(`${API_VERSION}/projects`, projectRoutes);
-app.use(`${API_VERSION}/boards`, boardRoutes);
-app.use(`${API_VERSION}/tasks`, taskRoutes);
-app.use(`${API_VERSION}/chat`, chatRoutes);
+app.use(`${API_VERSION}/tenants/:tenantId/projects`, projectRoutes);
+app.use(`${API_VERSION}/tenants/:tenantId/projects/:projectId/boards`, boardRoutes);
+app.use(`${API_VERSION}/tenants/:tenantId/projects/:projectId/boards/:boardId/tasks`, taskRoutes);
+app.use(`${API_VERSION}/tenants/:tenantId/projects/:projectId/chat`, chatRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Taskly API is running!" });

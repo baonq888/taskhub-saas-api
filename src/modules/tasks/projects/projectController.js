@@ -3,7 +3,9 @@ import ProjectService from "./projectService.js";
 class ProjectController {
   static async createProject(req, res) {
     try {
-      const project = await ProjectService.createProject(req.body);
+      const { tenantId } = req.params;
+      const data = req.body; 
+      const project = await ProjectService.createProject(tenantId, data);
       res.status(201).json(project);
     } catch (error) {
       res.status(500).json({ error: error.message });

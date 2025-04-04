@@ -8,6 +8,7 @@ const roleMiddleware = (requiredRoles, type = "tenant") => {
       if (type === "tenant") {
         const tenantId = req.params.tenantId;
         userRole = tenantRoles ? tenantRoles[tenantId] : null;
+
         if (!userRole) return res.status(403).json({ error: "Access denied. Not a tenant member." });
       } else if (type === "project") {
         const projectId = req.params.projectId;

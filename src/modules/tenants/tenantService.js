@@ -15,13 +15,22 @@ class TenantService {
   }
 
 
-  static async inviteUser(tenantId, email) {
-    // check if the user exists by email 
-    const user = UserRepository.findUserByEmail(email);
-    if (!user) {
-      throw new Error("User not found");
+  static async inviteUsers(tenantId, emails) {
+    const invitedUsers = [];
+  
+    for (const email of emails) {
+      const user = await UserRepository.findUserByEmail(email); 
+      
+      if (!user) {
+        console.warn(`User with email ${email} not found, skipping.`);
+        continue;
+      }
+  
+      const result = await TenantRepository.inviteUser(tenantId, user);
+      invitedUsers.push(result);
     }
-    return await TenantRepository.inviteUser(tenantId, user);
+  
+    return invitedUsers;
   }
 
   static async listTenants() {
