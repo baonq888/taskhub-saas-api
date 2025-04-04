@@ -20,30 +20,46 @@ class ProjectService {
     return project;
   }
 
-  static async getProjectById(id) {
-    return ProjectRepository.getProjectById(id);
+  static async getProjectById(tenantId, projectId) {
+    const tenant = await TenantService.getTenant(tenantId);
+    if (!tenant) {
+      throw new Error("Tenant not found");
+    }
+    return ProjectRepository.getProjectById(tenantId,projectId);
   }
 
-  static async getAllProjects() {
-    return ProjectRepository.getAllProjects();
+  static async getAllProjects(tenantId) {
+    const tenant = await TenantService.getTenant(tenantId);
+    if (!tenant) {
+      throw new Error("Tenant not found");
+    }
+    return ProjectRepository.getAllProjects(tenantId);
   }
 
-  static async updateProject(id, data) {
-    return ProjectRepository.updateProject(id, data);
+  static async updateProject(tenantId, projectId, data) {
+    const tenant = await TenantService.getTenant(tenantId);
+    if (!tenant) {
+      throw new Error("Tenant not found");
+    }
+    return ProjectRepository.updateProject(projectId, data);
   }
 
-  static async deleteProject(id) {
-    return ProjectRepository.deleteProject(id);
+  static async deleteProject(tenantId, projectId) {
+    const tenant = await TenantService.getTenant(tenantId);
+    if (!tenant) {
+      throw new Error("Tenant not found");
+    }
+    return ProjectRepository.deleteProject(projectId);
   }
  
-  static async inviteUsersToProject(projectId, emails) {
+  static async inviteUsersToProject(projectId, tenantId, emails) {
     if (!Array.isArray(emails) || emails.length === 0) {
       throw new Error("Please provide a valid list of emails.");
     }
   
     const users = [];
     for (const email of emails) {
-      const user = await UserRepository.findUserByEmail(email); // Using your existing method
+      const user = await UserRepository.findUserByEmail(email); 
       if (!user) {
         throw new Error(`User with email ${email} not found.`);
       }
@@ -57,14 +73,14 @@ class ProjectService {
     }
   
     // Check if tenant exists
-    const tenant = await TenantService.getTenant(project.tenantId);
+    const tenant = await TenantService.getTenant(tenantId);
     if (!tenant) {
       throw new Error("Tenant not found");
     }
   
     // Invite each user to the project and add them to the chat room
     for (const user of users) {
-      const tenantUser = await TenantService.getTenantUser(project.tenantId, user.id);
+      const tenantUser = await TenantService.getTenantUser(tenantId, user.id);
       if (!tenantUser) {
         throw new Error(`User with email ${user.email} is not a member of the tenant`);
       }

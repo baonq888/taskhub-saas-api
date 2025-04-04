@@ -11,22 +11,22 @@ router.post(
   roleMiddleware(["TENANT_ADMIN"], "tenant"), 
   ProjectController.createProject
 );
-router.get("/:id", authMiddleware, ProjectController.getProjectById);
+router.get("/:projectId", authMiddleware, ProjectController.getProjectById);
 router.get("/", authMiddleware, ProjectController.getAllProjects);
 router.put(
-  "/:id",
+  "/:projectId",
   authMiddleware,
   roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
   ProjectController.updateProject
 );
 router.delete(
-  "/:id",
+  "/:projectId",
   authMiddleware,
   roleMiddleware(["PROJECT_OWNER"], "project"), 
   ProjectController.deleteProject
 );
 router.post(
-  "/:id/invite",
+  "/:projectId/invite",
   authMiddleware,
   roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
   ProjectController.inviteUserToProject

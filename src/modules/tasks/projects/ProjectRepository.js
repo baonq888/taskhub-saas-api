@@ -5,20 +5,34 @@ class ProjectRepository {
     return prisma.project.create({ data });
   }
 
-  static async getProjectById(id) {
-    return prisma.project.findUnique({ where: { id } });
+  static async getProjectById(tenantId, projectId) {
+    return prisma.project.findUnique({
+      where: { id: projectId },
+      include: {
+        tenant: {
+          where: { id: tenantId },
+        },
+      },
+    });
   }
 
-  static async getAllProjects() {
-    return prisma.project.findMany();
+  static async getAllProjects(tenantId) {
+    return prisma.project.findMany({
+      where: { tenantId },
+    });
   }
 
-  static async updateProject(id, data) {
-    return prisma.project.update({ where: { id }, data });
+  static async updateProject(projectId, data) {
+    return prisma.project.update({
+      where: { id: projectId },
+      data,
+    });
   }
 
-  static async deleteProject(id) {
-    return prisma.project.delete({ where: { id } });
+  static async deleteProject(projectId) {
+    return prisma.project.delete({
+      where: { id: projectId },
+    });
   }
 
   static async inviteUserToProject(projectId, userId, role = "USER") {
@@ -28,12 +42,11 @@ class ProjectRepository {
         userId,
         role,
       },
-  })}
-
-
+    });
+  }
 
   static async updateProjectUserRole(projectId, userId, newRole) {
-    return await prisma.projectUser.update({
+    return prisma.projectUser.update({
       where: {
         userId_projectId: { userId, projectId },
       },
@@ -44,13 +57,12 @@ class ProjectRepository {
   }
 
   static async getProjectUser(projectId, userId) {
-    await prisma.projectUser.findUnique({
+    return prisma.projectUser.findUnique({
       where: {
         userId_projectId: { userId, projectId },
       },
     });
   }
-    
 }
 
 export default ProjectRepository;
