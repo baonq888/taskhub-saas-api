@@ -41,7 +41,7 @@ class TenantRepository {
     });
   }
 
-  static async inviteUser(tenantId, user, role = "USER") {
+  static async inviteUser(tenantId, user, role = "TENANT_MEMBER") {
 
     // Check if the user is already in the tenant
     const existingTenantUser = await prisma.tenantUser.findUnique({

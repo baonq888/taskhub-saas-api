@@ -18,7 +18,7 @@ router.post(
   "/:id/invite",
   authMiddleware,
   roleMiddleware(["TENANT_ADMIN", "TENANT_OWNER"], "tenant"),
-  TenantController.inviteUser
+  TenantController.inviteUsers
 );
 
 router.get("/", authMiddleware, TenantController.listTenants);

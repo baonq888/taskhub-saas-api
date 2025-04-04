@@ -15,21 +15,26 @@ class TenantController {
 
   static async getTenant(req, res) {
     try {
-      const { id } = req.params;
-      const tenant = await TenantService.getTenant(id);
+      const { tenantId } = req.params;
+      const tenant = await TenantService.getTenant(tenantId);
       res.status(200).json(tenant);
     } catch (error) {
       res.status(404).json({ error: error.message });
     }
   }
 
-  static async inviteUser(req, res) {
+  static async inviteUsers(req, res) {
     try {
-      const { email } = req.body;
+      const { emails } = req.body; 
       const { tenantId } = req.params;
-
-      await TenantService.inviteUser(tenantId, email);
-      res.status(200).json({ message: "User invited" });
+  
+      if (!Array.isArray(emails) || emails.length === 0) {
+        return res.status(400).json({ error: "Emails must be a non-empty array" });
+      }
+  
+      const invited = await TenantService.inviteUsers(tenantId, emails);
+      
+      res.status(200).json({ message: "Users invited", invited });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
