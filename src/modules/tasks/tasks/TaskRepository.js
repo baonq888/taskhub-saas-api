@@ -23,6 +23,14 @@ class TaskRepository {
     });
   }
 
+  static async getTaskByTitle(boardId, title) {
+    return prisma.task.findUnique({
+      where: {
+        boardId_title: { boardId, title },
+      }
+    });
+  }
+
   static async getAllTasks() {
     return prisma.task.findMany({
       include: {

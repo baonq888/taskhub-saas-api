@@ -10,6 +10,13 @@ class ProjectService {
     if (!tenantId || !data.name) {
       throw new Error("tenantId and project name are required");
     }
+
+    // Check if a project with the same name already exists in the tenant
+    const existingProject = await ProjectRepository.getProjectByName(tenantId, data.name);
+
+    if (existingProject) {
+      throw new Error(`A project with the name "${data.name}" already exists.`);
+    }
   
     const projectData = { ...data, tenantId };
   

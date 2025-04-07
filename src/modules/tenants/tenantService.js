@@ -2,6 +2,12 @@ import TenantRepository from "./TenantRepository.js";
 import UserRepository from "../auth/UserRepository.js";
 class TenantService {
   static async createTenant(userId, name) {
+    // Check if the tenant already exists
+    const existingTenant = await TenantRepository.getTenantByName(name);
+
+    if (existingTenant) {
+      throw new Error(`Tenant with name "${name}" already exists`);
+    }
     // create tenant and update user to tenant owner
     return await TenantRepository.createTenant(name, userId);
   }

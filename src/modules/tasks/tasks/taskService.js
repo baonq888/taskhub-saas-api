@@ -3,6 +3,11 @@ import TenantRepository from "../../tenants/TenantRepository.js";
 
 class TaskService {
   static async createTask(data) {
+    const existingTask = await TaskRepository.getTaskByTitle(data.boardId, data.title);
+
+    if (existingTask) {
+      throw new Error("A task with this title already exists in the project");
+    }
     return TaskRepository.createTask(data);
   }
 

@@ -1,10 +1,17 @@
 import prisma from "../../core/db/index.js";
 
 class TenantRepository {
+  static async getTenantByName(name) {
+    return prisma.tenant.findUnique({
+      where: {
+        name,
+      },
+    });
+  }
   static async createTenant(name, userId) {
-    return await prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx) => {
       const tenant = await tx.tenant.create({
-        data: { name },
+        data: {name},
       });
 
       await tx.tenantUser.create({
@@ -22,9 +29,9 @@ class TenantRepository {
   static async updateTenantUserRole(tenantId, userId, newRole) {
 
     // Update the role of the user in the tenant
-    return await prisma.tenantUser.update({
+    return prisma.tenantUser.update({
       where: {
-        userId_tenantId: { userId, tenantId },
+        userId_tenantId: {userId, tenantId},
       },
       data: {
         role: newRole,
@@ -33,10 +40,10 @@ class TenantRepository {
   }
 
   static async findTenantById(id) {
-    return await prisma.tenant.findUnique({
-      where: { id },
+    return prisma.tenant.findUnique({
+      where: {id},
       include: {
-        users: { include: { user: true } }, 
+        users: {include: {user: true}},
       },
     });
   }
@@ -55,7 +62,7 @@ class TenantRepository {
     }
   
     // Add the user to the tenant
-    return await prisma.tenantUser.create({
+    return prisma.tenantUser.create({
       data: {
         tenantId,
         userId: user.id,
@@ -66,7 +73,7 @@ class TenantRepository {
 
 
   static async listTenants() {
-    return await prisma.tenant.findMany();
+    return prisma.tenant.findMany();
   }
 
   static async getUsersByTenant(tenantId) {
@@ -84,7 +91,7 @@ class TenantRepository {
   }
 
   static async getTenantUser(tenantId, userId) {
-    return await prisma.tenantUser.findUnique({
+    return prisma.tenantUser.findUnique({
       where: {
         userId_tenantId: { userId, tenantId },
       },

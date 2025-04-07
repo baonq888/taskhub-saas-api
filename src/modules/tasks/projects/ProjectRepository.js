@@ -16,6 +16,14 @@ class ProjectRepository {
     });
   }
 
+  static async getProjectByName(tenantId, name) {
+    return prisma.project.findUnique({
+      where: {
+        tenantId_name: { tenantId, name }
+      },
+    });
+  }
+
   static async getAllProjects(tenantId) {
     return prisma.project.findMany({
       where: { tenantId },
