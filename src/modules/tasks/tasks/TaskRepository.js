@@ -54,11 +54,12 @@ class TaskRepository {
     });
   }
 
-  static async unassignTask(taskId, userId) {
-    return prisma.taskAssignee.delete({
+  static async unassignTask(taskId, userIds) {
+    return prisma.taskAssignee.deleteMany({
       where: {
-        userId_taskId: { userId, taskId }, // Composite key
-      },
+        taskId,
+        userId: { in: userIds }
+      }
     });
   }
 

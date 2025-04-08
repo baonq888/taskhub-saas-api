@@ -1,22 +1,13 @@
 import TaskRepository from "./TaskRepository.js";
-import BoardRepository from "../boards/BoardRepository.js";
 import ProjectAccessHelper from "../../../core/helpers/ProjectAccessHelper.js";
+import {checkBoardExist, checkTaskExist} from "../../../core/helpers/EntityExistenceHelper.js";
 
 class TaskService {
   static async createTask(userId, data) {
-    const board = await BoardRepository.getBoardById(data.boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
+    const board = await checkBoardExist(data.boardId);
 
     await ProjectAccessHelper.verifyUserInProject(userId, board.projectId);
 
-
-    const existingTask = await TaskRepository.getTaskByTitle(data.boardId, data.title);
-
-    if (existingTask) {
-      throw new Error("A task with this title already exists in the project");
-    }
     return TaskRepository.createTask(data);
   }
 
@@ -25,33 +16,15 @@ class TaskService {
       throw new Error("assignedUserIds must be a non-empty array.");
     }
 
-    const task = await TaskRepository.getTaskById(taskId);
-    if (!task) {
-      throw new Error("Task not found");
-    }
-
-    const board = await BoardRepository.getBoardById(task.boardId);
-    if (!board) {
-      throw new Error("Board not found");
-    }
-
+    const task = await checkTaskExist(taskId);
+    const board = await checkBoardExist(task.boardId);
     const projectId = board.projectId;
 
-    // Ensure admin belongs to the project
-    await ProjectAccessHelper.verifyUserInProject(projectAdminUserId, projectId);
-
-    // Ensure assigned users are in the same tenant as the admin
-    await Promise.all(
-        assignedUserIds.map(userId =>
-            ProjectAccessHelper.verifyUsersInSameTenant(projectAdminUserId, userId)
-        )
-    );
-
-    // Ensure assigned users are in the same project
-    await Promise.all(
-        assignedUserIds.map(userId =>
-            ProjectAccessHelper.verifyUserInProject(userId, projectId)
-        )
+    // Ensure admin belongs to the project and unassigned users are in the same tenant as the admin
+    await ProjectAccessHelper.verifyAdminAndUsersInProjectAndTenant(
+        projectAdminUserId,
+        assignedUserIds,
+        projectId
     );
 
     return Promise.all(
@@ -61,15 +34,26 @@ class TaskService {
     );
   }
 
-  static async unassignTask(taskId, userIds) {
-    if (!Array.isArray(userIds) || userIds.length === 0) {
+  static async unassignTask(taskId, userToUnassignedIds, projectAdminUserId) {
+    if (!Array.isArray(userToUnassignedIds) || userToUnassignedIds.length === 0) {
       throw new Error("userIds must be a non-empty array.");
     }
 
-    return Promise.all(
-      userIds.map(userId => TaskRepository.unassignTask(taskId, userId))
+    const task = await checkTaskExist(taskId);
+    const board = await checkBoardExist(task.boardId);
+
+    const projectId = board.projectId;
+
+    // Ensure admin belongs to the project and unassigned users are in the same tenant as the admin
+    await ProjectAccessHelper.verifyAdminAndUsersInProjectAndTenant(
+        projectAdminUserId,
+        userToUnassignedIds,
+        projectId
     );
+
+    return TaskRepository.unassignTask(taskId, userToUnassignedIds);
   }
+
   static async getTaskById(taskId) {
     return TaskRepository.getTaskById(taskId);
   }

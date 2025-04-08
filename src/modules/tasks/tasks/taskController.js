@@ -4,7 +4,7 @@ class TaskController {
   static async createTask(req, res) {
     try {
       const { data } = req.body
-      const userId = req.userId;
+      const userId = req.user.id;
       const task = await TaskService.createTask(userId, data);
       res.status(201).json(task);
     } catch (error) {
@@ -27,10 +27,11 @@ class TaskController {
 
   static async unassignTask(req, res) {
     try {
-      const { tenantId, projectId, boardId, taskId } = req.params
-      const { userId } = req.body;
+      const { taskId } = req.params
+      const { userIds } = req.body;
+      const adminUserId = req.user.id;
 
-      await TaskService.unassignTask(tenantId, projectId, boardId, taskId, userId);
+      await TaskService.unassignTask(taskId, userIds, adminUserId);
       res.status(200).json({ message: "User unassigned from task successfully" });
     } catch (error) {
       res.status(400).json({ error: error.message });

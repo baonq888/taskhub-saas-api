@@ -229,4 +229,58 @@ router.patch(
     TaskController.assignTask
 );
 
+/**
+ * @swagger
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{id}/unassign:
+ *   patch:
+ *     summary: Unassign users to a task
+ *     tags: [Tasks]
+ *     description: Unassign multiple users to a specific task by providing an array of user IDs.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: Task ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: body
+ *         in: body
+ *         description: List of user IDs to unassign to the task
+ *         required: true
+ *         schema:
+ *           type: object
+ *           properties:
+ *             userIds:
+ *               type: array
+ *               items:
+ *                 type: string
+ *                 format: uuid
+ *               description: List of user IDs to be unassigned to the task.
+ *               example: ["uuid1", "uuid2", "uuid3"]
+ *     responses:
+ *       200:
+ *         description: Users successfully unassigned to the task
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 task:
+ *                   $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Internal server error
+ */
+router.delete(
+    "/:id/unassign",
+    authMiddleware,
+    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    TaskController.unassignTask
+);
+
 export default router;

@@ -4,6 +4,11 @@ import ChatRoomService from "../../chat/chatRoom/chatRoomService.js";
 import ChatParticipantService from "../../chat/chatParticipant/chatParticipantService.js";
 import UserService from "../../user/userService.js";
 import TenantService from "../../tenants/tenantService.js";
+import {
+  checkProjectExists,
+  checkProjectExistsByName,
+  checkTenantExists, checkUserInProject, checkUserInTenant
+} from "../../../core/helpers/EntityExistenceHelper.js";
 
 class ProjectService {
   static async createProject(tenantId, data) {
@@ -12,11 +17,7 @@ class ProjectService {
     }
 
     // Check if a project with the same name already exists in the tenant
-    const existingProject = await ProjectRepository.getProjectByName(tenantId, data.name);
-
-    if (existingProject) {
-      throw new Error(`A project with the name "${data.name}" already exists.`);
-    }
+    await checkProjectExistsByName(tenantId, data.name);
   
     const projectData = { ...data, tenantId };
   
@@ -52,10 +53,7 @@ class ProjectService {
   }
 
   static async deleteProject(tenantId, projectId) {
-    const tenant = await TenantService.getTenant(tenantId);
-    if (!tenant) {
-      throw new Error("Tenant not found");
-    }
+    await checkTenantExists(tenantId);
     return ProjectRepository.deleteProject(projectId);
   }
  
@@ -74,17 +72,11 @@ class ProjectService {
     }
   
     // Check if project exists
-    const project = await ProjectRepository.getProjectById(projectId);
-    if (!project) {
-      throw new Error("Project not found");
-    }
+    await checkProjectExists(projectId);
   
     // Check if tenant exists
-    const tenant = await TenantService.getTenant(tenantId);
-    if (!tenant) {
-      throw new Error("Tenant not found");
-    }
-  
+    await checkTenantExists(tenantId);
+
     // Invite each user to the project and add them to the chat room
     for (const user of users) {
       const tenantUser = await TenantService.getTenantUser(tenantId, user.id);
@@ -113,20 +105,11 @@ class ProjectService {
     }
 
     // Check if user is already in the tenant
-    const tenant = await TenantService.getTenant(tenantId);
-    if (!tenant) {
-      throw new Error("Tenant not found");
-    }
+    await checkTenantExists(tenantId);
 
-    const tenantUser = await TenantService.getTenantUser(tenantId, userId)
-    if (!tenantUser) {
-      throw new Error("User is not a member of the tenant");
-    }
+    await checkUserInTenant(userId, tenantId);
 
-    const projectUser = await ProjectRepository.getProjectUser(projectId, userId)
-    if (!projectUser) {
-      throw new Error("User is not a member of the project");
-    }
+    await checkUserInProject(userId, projectId);
 
     await ProjectRepository.updateProjectUserRole(projectId, userId, newRole)
 

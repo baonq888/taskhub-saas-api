@@ -63,6 +63,16 @@ class ProjectController {
       res.status(400).json({ error: error.message });
     }
   }
+
+  static async getUsersInProjects(req, res) {
+    try {
+      const { tenantId } = req.params;
+      const projects = await ProjectService.getAllProjects(tenantId);
+      res.status(200).json(projects);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 export default ProjectController;

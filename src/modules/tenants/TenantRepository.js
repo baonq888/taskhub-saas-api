@@ -39,7 +39,7 @@ class TenantRepository {
     });
   }
 
-  static async findTenantById(id) {
+  static async getTenantById(id) {
     return prisma.tenant.findUnique({
       where: {id},
       include: {

@@ -13,7 +13,7 @@ class TenantService {
   }
 
   static async getTenant(id) {
-    return await TenantRepository.findTenantById(id);
+    return await TenantRepository.getTenantById(id);
   }
 
   static async getTenantUser(tenantId, userId) {
@@ -40,7 +40,7 @@ class TenantService {
   }
 
   static async listTenants() {
-    return await TenantRepository.listTenants();
+    return TenantRepository.listTenants();
   }
 
   static async updateTenantUserRole(tenantId, userId, newRole) {

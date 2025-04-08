@@ -4,7 +4,7 @@ class BoardController {
   async createBoard(req, res) {
     try {
       const { data } = req.body;
-      const userId = req.userId;
+      const userId = req.user.id;
       const Board = await BoardService.createBoard(userId, data);
       res.status(201).json(Board);
     } catch (error) {
@@ -32,7 +32,9 @@ class BoardController {
 
   async updateBoard(req, res) {
     try {
-      const board = await BoardService.updateBoard(req.params.id, req.body);
+      const { data } = req.body;
+      const userId = req.user.id;
+      const board = await BoardService.updateBoard(userId, data);
       res.status(200).json(board);
     } catch (error) {
       res.status(400).json({ error: error.message });
