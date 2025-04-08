@@ -35,7 +35,7 @@ app.use(helmet());
 app.use(json()); 
 app.use(urlencoded({ extended: true })); 
 
-const API_VERSION = "/api";
+const API_VERSION = "/api/v1";
 // Swagger UI route
 app.use(
     '/api-docs',

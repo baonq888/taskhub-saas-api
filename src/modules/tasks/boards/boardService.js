@@ -1,7 +1,12 @@
 import BoardRepository from "./BoardRepository.js";
 
+import ProjectAccessHelper from "../../../core/helpers/ProjectAccessHelper.js";
 class BoardService {
-  static async createProject(data) {
+  static async createBoard(userId, data) {
+    const { projectId } = data;
+
+    await ProjectAccessHelper.verifyUserInProject(userId, projectId);
+
     return BoardRepository.createBoard(data);
   }
 
@@ -13,7 +18,12 @@ class BoardService {
     return BoardRepository.getAllBoards();
   }
 
-  static async updateBoard(id, data) {
+  static async updateBoard(userId, id, data) {
+    const { projectId } = data;
+
+    await ProjectAccessHelper.verifyUserInProject(userId, projectId);
+
+    // Proceed with board update
     return BoardRepository.updateBoard(id, data);
   }
 

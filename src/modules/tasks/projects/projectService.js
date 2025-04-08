@@ -32,7 +32,7 @@ class ProjectService {
     if (!tenant) {
       throw new Error("Tenant not found");
     }
-    return ProjectRepository.getProjectById(tenantId,projectId);
+    return ProjectRepository.getProjectById(projectId);
   }
 
   static async getAllProjects(tenantId) {

@@ -10,6 +10,7 @@ class TaskRepository {
       data: {
         taskId,
         userId,
+        status: "IN_PROGRESS",
       },
     });
   }
@@ -18,7 +19,8 @@ class TaskRepository {
     return prisma.task.findUnique({
       where: { id },
       include: {
-        assignees: { include: { user: true } }, // Include assigned users
+        assignees: { include: { user: true } },
+
       },
     });
   }
@@ -41,6 +43,15 @@ class TaskRepository {
 
   static async updateTask(id, data) {
     return prisma.task.update({ where: { id }, data });
+  }
+
+  static async updateTaskStatus(id, status) {
+    return prisma.task.update({
+      where: {id},
+      data: {
+        status: status,
+      }
+    });
   }
 
   static async unassignTask(taskId, userId) {

@@ -8,11 +8,11 @@ const router = express.Router({ mergeParams: true });
  * @swagger
  * tags:
  *   name: Tasks
- *   description: User Details APIs
+ *   description: Task APIs
  */
 /**
  * @swagger
- * /tasks:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks:
  *   post:
  *     summary: Create a new task
  *     tags: [Tasks]
@@ -53,7 +53,7 @@ router.post("/", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{id}:
  *   get:
  *     summary: Get a task by its ID
  *     tags: [Tasks]
@@ -77,11 +77,11 @@ router.post("/", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", authMiddleware, TaskController.getTaskById);
+router.get("/:id", authMiddleware, roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN", "PROJECT_OWNER"], "project"), TaskController.getTaskById);
 
 /**
  * @swagger
- * /tasks:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks:
  *   get:
  *     summary: Get all tasks
  *     tags: [Tasks]
@@ -98,11 +98,11 @@ router.get("/:id", authMiddleware, TaskController.getTaskById);
  *       500:
  *         description: Internal server error
  */
-router.get("/", authMiddleware, TaskController.getAllTasks);
+router.get("/", authMiddleware, roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN", "PROJECT_OWNER"], "project"), TaskController.getAllTasks);
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{id}:
  *   put:
  *     summary: Update a task by its ID
  *     tags: [Tasks]
@@ -152,7 +152,7 @@ router.put("/:id", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWN
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{id}:
  *   delete:
  *     summary: Delete a task by its ID
  *     tags: [Tasks]
@@ -176,7 +176,7 @@ router.delete("/:id", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_
 
 /**
  * @swagger
- * /tasks/{id}/assign:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{id}/assign:
  *   patch:
  *     summary: Assign users to a task
  *     tags: [Tasks]

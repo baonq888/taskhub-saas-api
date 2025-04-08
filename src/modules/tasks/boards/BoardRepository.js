@@ -6,8 +6,12 @@ class BoardRepository {
   }
 
   static async getBoardById(id) {
-    return prisma.board.findUnique({ where: { id } });
+    return prisma.board.findUnique({
+      where: { id } ,
+      select: { projectId: true },
+    });
   }
+
 
   static async getAllBoards() {
     return prisma.board.findMany();

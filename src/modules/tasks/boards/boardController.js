@@ -3,7 +3,9 @@ import BoardService from "./boardService.js";
 class BoardController {
   async createBoard(req, res) {
     try {
-      const Board = await BoardService.createBoard(req.body);
+      const { data } = req.body;
+      const userId = req.userId;
+      const Board = await BoardService.createBoard(userId, data);
       res.status(201).json(Board);
     } catch (error) {
       res.status(500).json({ error: error.message });

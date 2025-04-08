@@ -1,8 +1,17 @@
 import TaskRepository from "./TaskRepository.js";
-import TenantRepository from "../../tenants/TenantRepository.js";
+import BoardRepository from "../boards/BoardRepository.js";
+import ProjectAccessHelper from "../../../core/helpers/ProjectAccessHelper.js";
 
 class TaskService {
-  static async createTask(data) {
+  static async createTask(userId, data) {
+    const board = await BoardRepository.getBoardById(data.boardId);
+    if (!board) {
+      throw new Error("Board not found");
+    }
+
+    await ProjectAccessHelper.verifyUserInProject(userId, board.projectId);
+
+
     const existingTask = await TaskRepository.getTaskByTitle(data.boardId, data.title);
 
     if (existingTask) {
@@ -11,40 +20,44 @@ class TaskService {
     return TaskRepository.createTask(data);
   }
 
-  static async assignTask(taskId, assignedUserIds, adminUserId) {
-    // Ensure assignedUserIds is an array
+  static async assignTask(taskId, assignedUserIds, projectAdminUserId) {
     if (!Array.isArray(assignedUserIds) || assignedUserIds.length === 0) {
       throw new Error("assignedUserIds must be a non-empty array.");
     }
 
-    // Fetch tenants for all assigned users
-    const userTenantsMap = await Promise.all(
-      assignedUserIds.map(userId => TenantRepository.getUserTenants(userId))
+    const task = await TaskRepository.getTaskById(taskId);
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    const board = await BoardRepository.getBoardById(task.boardId);
+    if (!board) {
+      throw new Error("Board not found");
+    }
+
+    const projectId = board.projectId;
+
+    // Ensure admin belongs to the project
+    await ProjectAccessHelper.verifyUserInProject(projectAdminUserId, projectId);
+
+    // Ensure assigned users are in the same tenant as the admin
+    await Promise.all(
+        assignedUserIds.map(userId =>
+            ProjectAccessHelper.verifyUsersInSameTenant(projectAdminUserId, userId)
+        )
     );
 
-    // Check if all users belong to a tenant
-    userTenantsMap.forEach((userTenants, index) => {
-      if (!userTenants.length) {
-        throw new Error(`User ${assignedUserIds[index]} does not belong to any tenant.`);
-      }
-    });
+    // Ensure assigned users are in the same project
+    await Promise.all(
+        assignedUserIds.map(userId =>
+            ProjectAccessHelper.verifyUserInProject(userId, projectId)
+        )
+    );
 
-    // Fetch admin's tenants
-    const adminTenants = await TenantRepository.getUserTenants(adminUserId);
-
-    // Ensure all users share at least one tenant with the admin
-    assignedUserIds.forEach((userId, index) => {
-      const userTenants = userTenantsMap[index];
-      const sharedTenant = adminTenants.find(t => userTenants.some(u => u.tenantId === t.tenantId));
-
-      if (!sharedTenant) {
-        throw new Error(`User ${userId} is not in the same tenant as the admin.`);
-      }
-    });
-
-    // Assign all users to the task
     return Promise.all(
-      assignedUserIds.map(userId => TaskRepository.assignTask(taskId, userId))
+        assignedUserIds.map(userId =>
+            TaskRepository.assignTask(taskId, userId)
+        )
     );
   }
 
@@ -57,16 +70,21 @@ class TaskService {
       userIds.map(userId => TaskRepository.unassignTask(taskId, userId))
     );
   }
-  static async getTaskById(id) {
-    return TaskRepository.getTaskById(id);
+  static async getTaskById(taskId) {
+    return TaskRepository.getTaskById(taskId);
   }
 
-  static async getAllTasks() {
+  static async getAllTasks(boardId) {
+    console.log(boardId)
     return TaskRepository.getAllTasks();
   }
 
-  static async updateTask(id, data) {
-    return TaskRepository.updateTask(id, data);
+  static async updateTask(taskId, data) {
+    return TaskRepository.updateTask(taskId, data);
+  }
+
+  static async updateTaskStatus(taskId, status) {
+    return TaskRepository.updateTaskStatus(taskId, status);
   }
 
   static async deleteTask(id) {

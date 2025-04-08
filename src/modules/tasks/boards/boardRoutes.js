@@ -7,10 +7,16 @@ const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
- * /api/v1/tenants/{tenantId}/projects/{projectId}/boards:
+ * tags:
+ *   name: Boards
+ *   description: Boards APIs
+ */
+
+/**
+ * @swagger
+ * /tenants/{tenantId}/projects/{projectId}/boards:
  *   post:
- *     tags:
- *       - Boards
+ *     tags: [Boards]
  *     summary: Create a new board
  *     parameters:
  *       - in: path
@@ -51,10 +57,9 @@ router.post(
 
 /**
  * @swagger
- * /api/v1/tenants/{tenantId}/projects/{projectId}/boards/{id}:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{id}:
  *   get:
- *     tags:
- *       - Boards
+ *     tags: [Boards]
  *     summary: Get a specific board by ID
  *     parameters:
  *       - in: path
@@ -99,10 +104,9 @@ router.get(
 
 /**
  * @swagger
- * /api/v1/tenants/{tenantId}/projects/{projectId}/boards:
+ * /tenants/{tenantId}/projects/{projectId}/boards:
  *   get:
- *     tags:
- *       - Boards
+ *     tags: [Boards]
  *     summary: Get all boards for a project
  *     parameters:
  *       - in: path
@@ -141,10 +145,9 @@ router.get(
 
 /**
  * @swagger
- * /api/v1/tenants/{tenantId}/projects/{projectId}/boards/{id}:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{id}:
  *   put:
- *     tags:
- *       - Boards
+ *     tags: [Boards]
  *     summary: Update a board by ID
  *     parameters:
  *       - in: path
@@ -190,10 +193,9 @@ router.put(
 
 /**
  * @swagger
- * /api/v1/tenants/{tenantId}/projects/{projectId}/boards/{id}:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{id}:
  *   delete:
- *     tags:
- *       - Boards
+ *     tags: [Boards]
  *     summary: Delete a board by ID
  *     parameters:
  *       - in: path

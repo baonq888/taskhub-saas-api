@@ -5,14 +5,10 @@ class ProjectRepository {
     return prisma.project.create({ data });
   }
 
-  static async getProjectById(tenantId, projectId) {
+  static async getProjectById(projectId) {
     return prisma.project.findUnique({
       where: { id: projectId },
-      include: {
-        tenant: {
-          where: { id: tenantId },
-        },
-      },
+      select: { tenantId: true },
     });
   }
 
@@ -43,7 +39,7 @@ class ProjectRepository {
     });
   }
 
-  static async inviteUserToProject(projectId, userId, role = "USER") {
+  static async inviteUserToProject(projectId, userId, role = "PROJECT_MEMBER") {
     return prisma.projectUser.create({
       data: {
         projectId,
