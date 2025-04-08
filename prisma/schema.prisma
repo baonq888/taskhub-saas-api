@@ -8,23 +8,22 @@ datasource db {
 }
 
 model Tenant {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  createdAt DateTime @default(now())
+  id        String       @id @default(uuid())
+  name      String       @unique
+  createdAt DateTime     @default(now())
   users     TenantUser[]
   projects  Project[]
-
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  tenants   TenantUser[]
-  userDetail UserDetail?
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  createdAt     DateTime       @default(now())
+  tenants       TenantUser[]
+  userDetail    UserDetail?
   refreshTokens RefreshToken[]
-  assignedTasks Task[] @relation("UserTasks") 
+  assignedTasks Task[]         @relation("UserTasks")
 
   Notification Notification[]
 
@@ -40,10 +39,10 @@ model User {
 model TenantUser {
   userId   String
   tenantId String
-  role     TenantRole   @default(TENANT_MEMBER) 
+  role     TenantRole @default(TENANT_MEMBER)
 
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@id([userId, tenantId])
 }
@@ -64,30 +63,29 @@ model UserDetail {
   address   String?
 }
 
-
 model Project {
   id        String   @id @default(uuid())
   name      String
   tenantId  String
   createdAt DateTime @default(now())
 
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  boards    Board[]
-
-  @@unique([name, tenantId])
-  ChatRoom ChatRoom[]
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  boards      Board[]
+  ChatRoom    ChatRoom[]
   ProjectUser ProjectUser[]
+
+  @@unique([tenantId, name])
 }
 
 model ProjectUser {
   userId    String
   projectId String
-  role      ProjectRole @default(PROJECT_MEMBER) 
+  role      ProjectRole @default(PROJECT_MEMBER)
 
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  joinedAt  DateTime @default(now())
+  joinedAt DateTime @default(now())
 
   @@id([userId, projectId])
 }
@@ -99,15 +97,15 @@ enum ProjectRole {
 }
 
 model Board {
-  id         String   @id @default(uuid())
-  name       String
-  projectId  String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  projectId String
+  createdAt DateTime @default(now())
 
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tasks      Task[]
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   Task[]
 
-  @@unique([name, projectId])
+  @@unique([projectId, name])
 }
 
 model Task {
@@ -115,27 +113,27 @@ model Task {
   title       String
   description String?
   boardId     String
-  assignedTo  String?  
+  assignedTo  String?
   status      TaskStatus @default(TODO)
   createdAt   DateTime   @default(now())
-  deadline    DateTime? 
+  deadline    DateTime?
 
-  board      Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  assignee   User?    @relation(fields: [assignedTo], references: [id], onDelete: SetNull, name: "UserTasks")
-
-  @@unique([title, boardId])
-  @@index([deadline])
-  @@index([status])     
-  @@index([assignedTo]) 
+  board        Board          @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  assignee     User?          @relation(fields: [assignedTo], references: [id], onDelete: SetNull, name: "UserTasks")
   TaskAssignee TaskAssignee[]
+
+  @@unique([boardId, title])
+  @@index([deadline])
+  @@index([status])
+  @@index([assignedTo])
 }
 
 model TaskAssignee {
-  userId  String
-  taskId  String
+  userId String
+  taskId String
 
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  task    Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   assignedAt DateTime @default(now())
 
@@ -157,16 +155,15 @@ model RefreshToken {
   expiresAt DateTime
 }
 
-
 model Notification {
-  id          String   @id @default(uuid())
-  userId      String
-  type        NotificationType
-  message     String
-  createdAt   DateTime @default(now())
-  read        Boolean  @default(false)
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  message   String
+  createdAt DateTime         @default(now())
+  read      Boolean          @default(false)
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum NotificationType {
@@ -175,12 +172,12 @@ enum NotificationType {
 }
 
 model ChatRoom {
-  id         String    @id @default(uuid())
-  projectId  String
-  createdAt  DateTime  @default(now())
+  id        String   @id @default(uuid())
+  projectId String
+  createdAt DateTime @default(now())
 
-  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  messages   Message[]
+  project      Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  messages     Message[]
   participants ChatParticipant[]
 }
 
@@ -188,21 +185,21 @@ model ChatParticipant {
   userId     String
   chatRoomId String
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chatRoom   ChatRoom  @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
 
-  joinedAt   DateTime  @default(now())
+  joinedAt DateTime @default(now())
 
   @@id([userId, chatRoomId])
 }
 
 model Message {
-  id         String    @id @default(uuid())
+  id         String   @id @default(uuid())
   chatRoomId String
   senderId   String
   content    String
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime @default(now())
 
-  chatRoom   ChatRoom  @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
-  sender     User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
+  sender   User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
 }

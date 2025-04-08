@@ -1,67 +1,74 @@
 import TaskRepository from "./TaskRepository.js";
-import TenantRepository from "../../tenants/TenantRepository.js";
+import ProjectAccessHelper from "../../../core/helpers/ProjectAccessHelper.js";
+import {checkBoardExist, checkTaskExist} from "../../../core/helpers/EntityExistenceHelper.js";
 
 class TaskService {
-  static async createTask(data) {
+  static async createTask(userId, data) {
+    const board = await checkBoardExist(data.boardId);
+
+    await ProjectAccessHelper.verifyUserInProject(userId, board.projectId);
+
     return TaskRepository.createTask(data);
   }
 
-  static async assignTask(taskId, assignedUserIds, adminUserId) {
-    // Ensure assignedUserIds is an array
+  static async assignTask(taskId, assignedUserIds, projectAdminUserId) {
     if (!Array.isArray(assignedUserIds) || assignedUserIds.length === 0) {
       throw new Error("assignedUserIds must be a non-empty array.");
     }
 
-    // Fetch tenants for all assigned users
-    const userTenantsMap = await Promise.all(
-      assignedUserIds.map(userId => TenantRepository.getUserTenants(userId))
+    const task = await checkTaskExist(taskId);
+    const board = await checkBoardExist(task.boardId);
+    const projectId = board.projectId;
+
+    // Ensure admin belongs to the project and unassigned users are in the same tenant as the admin
+    await ProjectAccessHelper.verifyAdminAndUsersInProjectAndTenant(
+        projectAdminUserId,
+        assignedUserIds,
+        projectId
     );
 
-    // Check if all users belong to a tenant
-    userTenantsMap.forEach((userTenants, index) => {
-      if (!userTenants.length) {
-        throw new Error(`User ${assignedUserIds[index]} does not belong to any tenant.`);
-      }
-    });
-
-    // Fetch admin's tenants
-    const adminTenants = await TenantRepository.getUserTenants(adminUserId);
-
-    // Ensure all users share at least one tenant with the admin
-    assignedUserIds.forEach((userId, index) => {
-      const userTenants = userTenantsMap[index];
-      const sharedTenant = adminTenants.find(t => userTenants.some(u => u.tenantId === t.tenantId));
-
-      if (!sharedTenant) {
-        throw new Error(`User ${userId} is not in the same tenant as the admin.`);
-      }
-    });
-
-    // Assign all users to the task
     return Promise.all(
-      assignedUserIds.map(userId => TaskRepository.assignTask(taskId, userId))
+        assignedUserIds.map(userId =>
+            TaskRepository.assignTask(taskId, userId)
+        )
     );
   }
 
-  static async unassignTask(taskId, userIds) {
-    if (!Array.isArray(userIds) || userIds.length === 0) {
+  static async unassignTask(taskId, userToUnassignedIds, projectAdminUserId) {
+    if (!Array.isArray(userToUnassignedIds) || userToUnassignedIds.length === 0) {
       throw new Error("userIds must be a non-empty array.");
     }
 
-    return Promise.all(
-      userIds.map(userId => TaskRepository.unassignTask(taskId, userId))
+    const task = await checkTaskExist(taskId);
+    const board = await checkBoardExist(task.boardId);
+
+    const projectId = board.projectId;
+
+    // Ensure admin belongs to the project and unassigned users are in the same tenant as the admin
+    await ProjectAccessHelper.verifyAdminAndUsersInProjectAndTenant(
+        projectAdminUserId,
+        userToUnassignedIds,
+        projectId
     );
-  }
-  static async getTaskById(id) {
-    return TaskRepository.getTaskById(id);
+
+    return TaskRepository.unassignTask(taskId, userToUnassignedIds);
   }
 
-  static async getAllTasks() {
+  static async getTaskById(taskId) {
+    return TaskRepository.getTaskById(taskId);
+  }
+
+  static async getAllTasks(boardId) {
+    console.log(boardId)
     return TaskRepository.getAllTasks();
   }
 
-  static async updateTask(id, data) {
-    return TaskRepository.updateTask(id, data);
+  static async updateTask(taskId, data) {
+    return TaskRepository.updateTask(taskId, data);
+  }
+
+  static async updateTaskStatus(taskId, status) {
+    return TaskRepository.updateTaskStatus(taskId, status);
   }
 
   static async deleteTask(id) {

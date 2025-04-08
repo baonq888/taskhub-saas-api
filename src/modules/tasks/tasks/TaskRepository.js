@@ -10,6 +10,7 @@ class TaskRepository {
       data: {
         taskId,
         userId,
+        status: "IN_PROGRESS",
       },
     });
   }
@@ -18,8 +19,17 @@ class TaskRepository {
     return prisma.task.findUnique({
       where: { id },
       include: {
-        assignees: { include: { user: true } }, // Include assigned users
+        assignees: { include: { user: true } },
+
       },
+    });
+  }
+
+  static async getTaskByTitle(boardId, title) {
+    return prisma.task.findUnique({
+      where: {
+        boardId_title: { boardId, title },
+      }
     });
   }
 
@@ -35,11 +45,21 @@ class TaskRepository {
     return prisma.task.update({ where: { id }, data });
   }
 
-  static async unassignTask(taskId, userId) {
-    return prisma.taskAssignee.delete({
+  static async updateTaskStatus(id, status) {
+    return prisma.task.update({
+      where: {id},
+      data: {
+        status: status,
+      }
+    });
+  }
+
+  static async unassignTask(taskId, userIds) {
+    return prisma.taskAssignee.deleteMany({
       where: {
-        userId_taskId: { userId, taskId }, // Composite key
-      },
+        taskId,
+        userId: { in: userIds }
+      }
     });
   }
 

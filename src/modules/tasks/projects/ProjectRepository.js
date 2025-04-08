@@ -5,35 +5,52 @@ class ProjectRepository {
     return prisma.project.create({ data });
   }
 
-  static async getProjectById(id) {
-    return prisma.project.findUnique({ where: { id } });
+  static async getProjectById(projectId) {
+    return prisma.project.findUnique({
+      where: { id: projectId },
+      select: { tenantId: true },
+    });
   }
 
-  static async getAllProjects() {
-    return prisma.project.findMany();
+  static async getProjectByName(tenantId, name) {
+    return prisma.project.findUnique({
+      where: {
+        tenantId_name: { tenantId, name }
+      },
+    });
   }
 
-  static async updateProject(id, data) {
-    return prisma.project.update({ where: { id }, data });
+  static async getAllProjects(tenantId) {
+    return prisma.project.findMany({
+      where: { tenantId },
+    });
   }
 
-  static async deleteProject(id) {
-    return prisma.project.delete({ where: { id } });
+  static async updateProject(projectId, data) {
+    return prisma.project.update({
+      where: { id: projectId },
+      data,
+    });
   }
 
-  static async inviteUserToProject(projectId, userId, role = "USER") {
+  static async deleteProject(projectId) {
+    return prisma.project.delete({
+      where: { id: projectId },
+    });
+  }
+
+  static async inviteUserToProject(projectId, userId, role = "PROJECT_MEMBER") {
     return prisma.projectUser.create({
       data: {
         projectId,
         userId,
         role,
       },
-  })}
-
-
+    });
+  }
 
   static async updateProjectUserRole(projectId, userId, newRole) {
-    return await prisma.projectUser.update({
+    return prisma.projectUser.update({
       where: {
         userId_projectId: { userId, projectId },
       },
@@ -44,13 +61,12 @@ class ProjectRepository {
   }
 
   static async getProjectUser(projectId, userId) {
-    await prisma.projectUser.findUnique({
+    return prisma.projectUser.findUnique({
       where: {
         userId_projectId: { userId, projectId },
       },
     });
   }
-    
 }
 
 export default ProjectRepository;

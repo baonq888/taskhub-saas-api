@@ -2,12 +2,18 @@ import TenantRepository from "./TenantRepository.js";
 import UserRepository from "../auth/UserRepository.js";
 class TenantService {
   static async createTenant(userId, name) {
+    // Check if the tenant already exists
+    const existingTenant = await TenantRepository.getTenantByName(name);
+
+    if (existingTenant) {
+      throw new Error(`Tenant with name "${name}" already exists`);
+    }
     // create tenant and update user to tenant owner
     return await TenantRepository.createTenant(name, userId);
   }
 
   static async getTenant(id) {
-    return await TenantRepository.findTenantById(id);
+    return await TenantRepository.getTenantById(id);
   }
 
   static async getTenantUser(tenantId, userId) {
@@ -34,7 +40,7 @@ class TenantService {
   }
 
   static async listTenants() {
-    return await TenantRepository.listTenants();
+    return TenantRepository.listTenants();
   }
 
   static async updateTenantUserRole(tenantId, userId, newRole) {

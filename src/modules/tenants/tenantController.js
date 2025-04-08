@@ -49,6 +49,15 @@ class TenantController {
     }
   }
 
+  static async getUsersInTenants(req, res) {
+    try {
+      const tenants = await TenantService.listTenants();
+      res.status(200).json(tenants);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   static async updateTenantUserRole(req, res) {
     try {
       const { tenantId, userId } = req.params;
