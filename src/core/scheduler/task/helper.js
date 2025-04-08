@@ -4,10 +4,10 @@ import { subDays, startOfDay, endOfDay } from "date-fns";
 const DAYS_BEFORE_DEADLINE = 3;
 
 
-async function getAllTasksBeforeDeadline() {
+export async function getAllTasksBeforeDeadline() {
     const today = new Date();
     const targetDate = subDays(today, DAYS_BEFORE_DEADLINE);
-    return await prisma.task.findMany({
+    return prisma.task.findMany({
         where: {
             deadline: {
                 gte: startOfDay(targetDate), // Start of the target day
@@ -21,4 +21,3 @@ async function getAllTasksBeforeDeadline() {
     });
 }
 
-export default { getAllTasksBeforeDeadline };
