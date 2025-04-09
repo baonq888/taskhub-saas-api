@@ -12,6 +12,17 @@ services:
     networks:
       - taskhub
 
+  test-db:
+    image: postgres:13
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: taskhub_db
+    networks:
+      - taskhub
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
