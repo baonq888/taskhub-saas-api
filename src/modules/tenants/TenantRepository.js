@@ -1,4 +1,5 @@
 import prisma from "../../core/db/index.js";
+import {TenantRole} from "@prisma/client";
 
 class TenantRepository {
   static async getTenantByName(name) {
@@ -18,7 +19,7 @@ class TenantRepository {
         data: {
           tenantId: tenant.id,
           userId,
-          role: "TENANT_OWNER",
+          role: TenantRole.TENANT_OWNER,
         },
       });
 
@@ -48,7 +49,7 @@ class TenantRepository {
     });
   }
 
-  static async inviteUser(tenantId, user, role = "TENANT_MEMBER") {
+  static async inviteUser(tenantId, user, role = TenantRole.TENANT_MEMBER) {
 
     // Check if the user is already in the tenant
     const existingTenantUser = await prisma.tenantUser.findUnique({
@@ -100,7 +101,7 @@ class TenantRepository {
 
   static async isTenantAdmin(userId, tenantId) {
     const tenantUser = await prisma.tenantUser.findFirst({
-      where: { userId, tenantId, role: "TENANT_ADMIN" },
+      where: { userId, tenantId, role: TenantRole.TENANT_ADMIN },
     });
     return !!tenantUser; // Returns true if user is a Tenant Admin, else false
   }

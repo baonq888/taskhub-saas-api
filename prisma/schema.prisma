@@ -23,9 +23,7 @@ model User {
   tenants       TenantUser[]
   userDetail    UserDetail?
   refreshTokens RefreshToken[]
-  assignedTasks Task[]         @relation("UserTasks")
-
-  Notification Notification[]
+  Notification  Notification[]
 
   ChatParticipant ChatParticipant[]
 
@@ -113,19 +111,16 @@ model Task {
   title       String
   description String?
   boardId     String
-  assignedTo  String?
   status      TaskStatus @default(TODO)
   createdAt   DateTime   @default(now())
   deadline    DateTime?
 
   board        Board          @relation(fields: [boardId], references: [id], onDelete: Cascade)
-  assignee     User?          @relation(fields: [assignedTo], references: [id], onDelete: SetNull, name: "UserTasks")
   TaskAssignee TaskAssignee[]
 
   @@unique([boardId, title])
   @@index([deadline])
   @@index([status])
-  @@index([assignedTo])
 }
 
 model TaskAssignee {

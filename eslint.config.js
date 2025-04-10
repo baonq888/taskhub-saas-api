@@ -16,7 +16,16 @@ export default [
       import: importPlugin, 
     },
     rules: {
-      "import/no-unresolved": "error"
-    }
+      "import/no-unresolved": "error",
+      "chai-friendly/no-unused-expressions": "error"
+    },
+    overrides: [
+      {
+        files: ['tests/**/*.test.js'],
+        env: {
+          mocha: true,
+        },
+      },
+    ],
   }
 ];

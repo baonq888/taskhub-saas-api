@@ -69,6 +69,18 @@ class TaskController {
     }
   }
 
+  static async updateTaskStatus(req, res) {
+    try {
+      const { taskId } = req.params;
+      const { status } = req.body;
+
+      const task = await TaskService.updateTaskStatus(taskId, status);
+      res.status(200).json(task);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   static async deleteTask(req, res) {
     try {
       await TaskService.deleteTask(req.params.id);

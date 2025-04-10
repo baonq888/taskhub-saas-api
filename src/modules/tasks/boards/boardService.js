@@ -4,9 +4,7 @@ import ProjectAccessHelper from "../../../core/helpers/ProjectAccessHelper.js";
 class BoardService {
   static async createBoard(userId, data) {
     const { projectId } = data;
-
     await ProjectAccessHelper.verifyUserInProject(userId, projectId);
-
     return BoardRepository.createBoard(data);
   }
 
@@ -20,9 +18,7 @@ class BoardService {
 
   static async updateBoard(userId, id, data) {
     const { projectId } = data;
-
     await ProjectAccessHelper.verifyUserInProject(userId, projectId);
-
     // Proceed with board update
     return BoardRepository.updateBoard(id, data);
   }

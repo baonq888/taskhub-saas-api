@@ -4,7 +4,6 @@ import UserDetailRepository from "./UserDetailRepository.js";
 class UserService {
   static async getUserDetails(userId) {
     const user = await UserDetailRepository.getUserWithDetails(userId);
-
     if (!user) throw new Error("User not found");
     return new UserDetailDTO(user);
   }

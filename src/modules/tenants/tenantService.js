@@ -4,7 +4,6 @@ class TenantService {
   static async createTenant(userId, name) {
     // Check if the tenant already exists
     const existingTenant = await TenantRepository.getTenantByName(name);
-
     if (existingTenant) {
       throw new Error(`Tenant with name "${name}" already exists`);
     }
@@ -23,19 +22,15 @@ class TenantService {
 
   static async inviteUsers(tenantId, emails) {
     const invitedUsers = [];
-  
     for (const email of emails) {
-      const user = await UserRepository.findUserByEmail(email); 
-      
+      const user = await UserRepository.findUserByEmail(email);
       if (!user) {
         console.warn(`User with email ${email} not found, skipping.`);
         continue;
       }
-  
       const result = await TenantRepository.inviteUser(tenantId, user);
       invitedUsers.push(result);
     }
-  
     return invitedUsers;
   }
 

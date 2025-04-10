@@ -2,29 +2,24 @@ import ProjectRepository from "./ProjectRepository.js";
 import UserRepository from "../../auth/UserRepository.js";
 import ChatRoomService from "../../chat/chatRoom/chatRoomService.js";
 import ChatParticipantService from "../../chat/chatParticipant/chatParticipantService.js";
-import UserService from "../../user/userService.js";
 import TenantService from "../../tenants/tenantService.js";
 import {
   checkProjectExists,
   checkProjectExistsByName,
-  checkTenantExists, checkUserInProject, checkUserInTenant
+  checkTenantExists, checkUserExist, checkUserInProject, checkUserInTenant
 } from "../../../core/helpers/EntityExistenceHelper.js";
+import {ProjectRole} from "@prisma/client";
 
 class ProjectService {
   static async createProject(tenantId, data) {
     if (!tenantId || !data.name) {
       throw new Error("tenantId and project name are required");
     }
-
     // Check if a project with the same name already exists in the tenant
     await checkProjectExistsByName(tenantId, data.name);
-  
     const projectData = { ...data, tenantId };
-  
     const project = await ProjectRepository.createProject(projectData);
-  
     await ChatRoomService.createChatRoomForProject(project.id);
-  
     return project;
   }
 
@@ -61,7 +56,6 @@ class ProjectService {
     if (!Array.isArray(emails) || emails.length === 0) {
       throw new Error("Please provide a valid list of emails.");
     }
-  
     const users = [];
     for (const email of emails) {
       const user = await UserRepository.findUserByEmail(email); 
@@ -70,23 +64,18 @@ class ProjectService {
       }
       users.push(user);
     }
-  
     // Check if project exists
     await checkProjectExists(projectId);
-  
     // Check if tenant exists
     await checkTenantExists(tenantId);
-
     // Invite each user to the project and add them to the chat room
     for (const user of users) {
       const tenantUser = await TenantService.getTenantUser(tenantId, user.id);
       if (!tenantUser) {
         throw new Error(`User with email ${user.email} is not a member of the tenant`);
       }
-  
       // Invite user to project
       await ProjectRepository.inviteUserToProject(projectId, user.id);
-  
       // Add user to chat room participants
       const chatRoom = await ChatRoomService.getChatRoomByProject(projectId);
       if (chatRoom) {
@@ -98,22 +87,16 @@ class ProjectService {
   }
 
   static async updateProjectUserRole(tenantId, projectId, userId, newRole) {
-    // Check if user exists
-    const user = await UserService.getUserDetails(userId);
-    if (!user) {
-      throw new Error("User not found");
+    if (![ProjectRole.PROJECT_MEMBER, ProjectRole.PROJECT_ADMIN, ProjectRole.PROJECT_OWNER].includes(newRole)) {
+      throw new Error("Invalid role");
     }
-
+    // Check if user exists
+    await checkUserExist(userId);
     // Check if user is already in the tenant
     await checkTenantExists(tenantId);
-
     await checkUserInTenant(userId, tenantId);
-
     await checkUserInProject(userId, projectId);
-
     await ProjectRepository.updateProjectUserRole(projectId, userId, newRole)
-
-    
   }
 }
 
