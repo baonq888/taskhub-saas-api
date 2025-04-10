@@ -15,13 +15,31 @@ services:
   test-db:
     image: postgres:13
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: taskhub_db
+      POSTGRES_DB: taskhub_test_db
     networks:
       - taskhub
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - taskhub
+    restart: unless-stopped
+
+  test-redis:
+    image: redis:3.2-alpine
+    container_name: test_redis
+    ports:
+      - "6380:6379"
+    networks:
+      - taskhub
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -37,15 +55,6 @@ services:
       - taskhub
     restart: unless-stopped
 
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - taskhub
-    restart: unless-stopped
-
   app:
     build: .
     container_name: node_app
@@ -54,7 +63,7 @@ services:
       - redis
     environment:
       RABBITMQ_URL: "amqp://user:password@rabbitmq"
-      REDIS_URL: "redis://redis:6379"  # Redis connection URL
+      REDIS_URL: "redis://redis:6379"
     ports:
       - "3000:3000"
     networks:

@@ -2,13 +2,13 @@ import ProjectRepository from "./ProjectRepository.js";
 import UserRepository from "../../auth/UserRepository.js";
 import ChatRoomService from "../../chat/chatRoom/chatRoomService.js";
 import ChatParticipantService from "../../chat/chatParticipant/chatParticipantService.js";
-import UserService from "../../user/userService.js";
 import TenantService from "../../tenants/tenantService.js";
 import {
   checkProjectExists,
   checkProjectExistsByName,
-  checkTenantExists, checkUserInProject, checkUserInTenant
+  checkTenantExists, checkUserExist, checkUserInProject, checkUserInTenant
 } from "../../../core/helpers/EntityExistenceHelper.js";
+import {ProjectRole} from "@prisma/client";
 
 class ProjectService {
   static async createProject(tenantId, data) {
@@ -87,11 +87,11 @@ class ProjectService {
   }
 
   static async updateProjectUserRole(tenantId, projectId, userId, newRole) {
-    // Check if user exists
-    const user = await UserService.getUserDetails(userId);
-    if (!user) {
-      throw new Error("User not found");
+    if (![ProjectRole.PROJECT_MEMBER, ProjectRole.PROJECT_ADMIN, ProjectRole.PROJECT_OWNER].includes(newRole)) {
+      throw new Error("Invalid role");
     }
+    // Check if user exists
+    await checkUserExist(userId);
     // Check if user is already in the tenant
     await checkTenantExists(tenantId);
     await checkUserInTenant(userId, tenantId);

@@ -3,6 +3,9 @@ import request from 'supertest';
 import server from '../testServer.js';
 import prisma from '../../src/core/db/index.js';
 import {setToken} from "./tokenStore.js";
+import {setEntity} from "./testState.js";
+
+
 
 describe('Auth Endpoints', () => {
     const users = [
@@ -32,14 +35,13 @@ describe('Auth Endpoints', () => {
                     .send({
                         email: user.email,
                         password: user.password,
-                        role: user.role // this assumes your endpoint accepts a `role` field
                     });
 
                 expect(res.status).to.equal(201);
                 expect(res.body.user).to.have.property('email', user.email);
-                expect(res.body.user).to.have.property('role', user.role);
 
-                // Store token
+                const userId = res.body.user.id;
+                setEntity('users', user.email, userId);
                 setToken(user.email, res.body.accessToken);
 
             }
@@ -61,7 +63,8 @@ describe('Auth Endpoints', () => {
                 expect(res.body).to.have.property('accessToken');
                 expect(res.body).to.have.property('refreshToken');
 
-                // Store token
+                const userId = res.body.user.id;
+                setEntity('users', user.email, userId);
                 setToken(user.email, res.body.accessToken);
             }});
     });

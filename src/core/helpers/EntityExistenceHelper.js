@@ -2,6 +2,15 @@ import TaskRepository from "../../modules/tasks/tasks/TaskRepository.js";
 import BoardRepository from "../../modules/tasks/boards/BoardRepository.js";
 import ProjectRepository from "../../modules/tasks/projects/ProjectRepository.js";
 import TenantRepository from "../../modules/tenants/TenantRepository.js";
+import UserService from "../../modules/user/userService.js";
+
+export async function checkUserExist(userId) {
+    const user = await UserService.getUserDetails(userId);
+    if (!user) {
+        throw new Error("User not found");
+    }
+    return user;
+}
 
 export async function checkTaskExist(taskId) {
     const task = await TaskRepository.getTaskById(taskId);

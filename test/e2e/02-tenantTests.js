@@ -16,29 +16,32 @@ describe('Tenant Endpoints', () => {
         clearTestState();
     });
 
+    const email = 'tenantowner@gmail.com'
+    const tenantName = 'QB Corp';
+
     describe('Create Tenant', () => {
         it('should create a new tenant as tenant owner', async () => {
             const res = await request(server)
                 .post('/tenants')
-                .set('Authorization', `Bearer ${getToken('tenantowner@gmail.com')}`)
-                .send({ name: 'QB Corp' });
+                .set('Authorization', `Bearer ${getToken(email)}`)
+                .send({ name: tenantName });
 
             expect(res.status).to.equal(201);
             expect(res.body).to.have.property('tenant');
-            expect(res.body.tenant).to.have.property('name', 'QB Corp');
+            expect(res.body.tenant).to.have.property('name', tenantName);
 
             const tenantId = res.body.tenant.id;
-            setEntity('tenants', 'QB Corp', tenantId);
+            setEntity('tenants', tenantName, tenantId);
         });
     });
 
     describe('Get Tenant by ID', () => {
         it('should fetch tenant details', async () => {
-            const tenantId = getEntity('tenants', 'QB Corp');
+            const tenantId = getEntity('tenants', tenantName);
 
             const res = await request(server)
                 .get(`/tenants/${tenantId}`)
-                .set('Authorization', `Bearer ${getToken('tenantowner@gmail.com')}`);
+                .set('Authorization', `Bearer ${getToken(email)}`);
 
             expect(res.status).to.equal(200);
             expect(res.body).to.have.property('id', tenantId);
@@ -53,11 +56,11 @@ describe('Tenant Endpoints', () => {
                 'tenantmember2@gmail.com'
             ];
 
-            const tenantId = getEntity('tenants', 'QB Corp');
+            const tenantId = getEntity('tenants', tenantName);
 
             const res = await request(server)
                 .post(`/tenants/${tenantId}/invite`)
-                .set('Authorization', `Bearer ${getToken('tenantowner@gmail.com')}`)
+                .set('Authorization', `Bearer ${getToken(email)}`)
                 .send({ emails });
 
             expect(res.status).to.equal(200);
@@ -66,11 +69,11 @@ describe('Tenant Endpoints', () => {
         });
 
         it('should return 400 for invalid emails array', async () => {
-            const tenantId = getEntity('tenants', 'QB Corp');
+            const tenantId = getEntity('tenants', tenantName);
 
             const res = await request(server)
                 .post(`/tenants/${tenantId}/invite`)
-                .set('Authorization', `Bearer ${getToken('tenantowner@gmail.com')}`)
+                .set('Authorization', `Bearer ${getToken(email)}`)
                 .send({ emails: [] });
 
             expect(res.status).to.equal(400);
@@ -79,18 +82,16 @@ describe('Tenant Endpoints', () => {
     });
 
     describe('Update Tenant User Role', () => {
-        before(async () => {
-            const user = await prisma.user.findUnique({ where: { email: 'tenantadmin@gmail.com' } });
-            if (user) setEntity('users', 'tenantadmin@gmail.com', user.id);
-        });
+        const emailToInvite = 'tenantadmin@gmail.com';
+
 
         it('should update user role in tenant', async () => {
-            const tenantId = getEntity('tenants', 'QB Corp');
-            const memberId = getEntity('users', 'tenantadmin@gmail.com');
+            const tenantId = getEntity('tenants', tenantName);
+            const memberId = getEntity('users', emailToInvite);
 
             const res = await request(server)
                 .patch(`/tenants/${tenantId}/users/${memberId}/role`)
-                .set('Authorization', `Bearer ${getToken('tenantowner@gmail.com')}`)
+                .set('Authorization', `Bearer ${getToken(email)}`)
                 .send({ newRole: TenantRole.TENANT_ADMIN });
 
             expect(res.status).to.equal(200);
@@ -102,7 +103,7 @@ describe('Tenant Endpoints', () => {
         it('should list all tenants', async () => {
             const res = await request(server)
                 .get('/tenants')
-                .set('Authorization', `Bearer ${getToken('tenantowner@gmail.com')}`);
+                .set('Authorization', `Bearer ${getToken(email)}`);
 
             expect(res.status).to.equal(200);
             expect(res.body).to.be.an('array');

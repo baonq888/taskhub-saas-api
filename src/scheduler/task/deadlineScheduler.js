@@ -1,5 +1,5 @@
 import { getAllTasksBeforeDeadline } from "./helper.js";
-import RabbitMQMessageQueue from "../../../infrastructure/messaging/RabbitMQMessageQueue.js";
+import RabbitMQMessageQueue from "../../infrastructure/messaging/RabbitMQMessageQueue.js";
 
 class DeadlineScheduler {
   static async notifyDeadline() {

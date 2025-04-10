@@ -34,6 +34,8 @@ class ProjectRepository {
     });
   }
 
+
+
   static async deleteProject(projectId) {
     return prisma.project.delete({
       where: { id: projectId },

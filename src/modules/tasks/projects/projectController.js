@@ -64,6 +64,18 @@ class ProjectController {
     }
   }
 
+  static async updateProjectUserRole(req, res) {
+    try {
+      const { tenantId, projectId, userId } = req.params;
+      const { newRole } = req.body;
+
+      await ProjectService.updateProjectUserRole(tenantId, projectId, userId, newRole);
+      res.status(200).json({ message: "User role updated successfully" });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   static async getUsersInProjects(req, res) {
     try {
       const { tenantId } = req.params;

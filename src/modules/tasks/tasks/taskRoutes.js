@@ -150,6 +150,74 @@ router.get("/", authMiddleware, roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN
  */
 router.put("/:id", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"), TaskController.updateTask);
 
+
+/**
+ * @swagger
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{taskId}/status:
+ *   patch:
+ *     summary: Update the status of a task
+ *     tags: [Tasks]
+ *     description: Update the status of a task.
+ *     parameters:
+ *       - name: tenantId
+ *         in: path
+ *         required: true
+ *         description: Tenant ID
+ *         schema:
+ *           type: string
+ *       - name: projectId
+ *         in: path
+ *         required: true
+ *         description: Project ID
+ *         schema:
+ *           type: string
+ *       - name: boardId
+ *         in: path
+ *         required: true
+ *         description: Board ID
+ *         schema:
+ *           type: string
+ *       - name: taskId
+ *         in: path
+ *         required: true
+ *         description: Task ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [TODO, IN_PROGRESS, DONE]
+ *                 example: IN_PROGRESS
+ *     responses:
+ *       200:
+ *         description: Task status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Internal server error
+ */
+router.patch(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    TaskController.updateTaskStatus
+);
+
+
 /**
  * @swagger
  * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{id}:

@@ -226,4 +226,55 @@ router.post(
     ProjectController.inviteUserToProject
 );
 
+/**
+ * @swagger
+ * /tenants/{tenantId}/projects/{projectId}/users/{userId}/role:
+ *   patch:
+ *     summary: Update a user's role in a project
+ *     tags: [Projects]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: tenantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: projectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newRole:
+ *                 type: string
+ *                 example: "PROJECT_ADMIN"
+ *     responses:
+ *       200:
+ *         description: User role updated successfully
+ *       400:
+ *         description: Bad request
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Not found
+ */
+router.patch(
+    "/:tenantId/projects/:projectId/users/:userId/role",
+    authMiddleware,
+    roleMiddleware(["PROJECT_OWNER"], "project"),
+    ProjectController.updateProjectUserRole
+);
+
 export default router;
