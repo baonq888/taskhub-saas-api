@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import request from 'supertest';
-import server from '../../testServer.js';
-import prisma from '../../../src/core/db/index.js';
+import server from '../testServer.js';
+import prisma from '../../src/core/db/index.js';
+import {setToken} from "./tokenStore.js";
 
 describe('Auth Endpoints', () => {
     const users = [
@@ -37,22 +38,15 @@ describe('Auth Endpoints', () => {
                 expect(res.status).to.equal(201);
                 expect(res.body.user).to.have.property('email', user.email);
                 expect(res.body.user).to.have.property('role', user.role);
+
+                // Store token
+                setToken(user.email, res.body.accessToken);
+
             }
         });
     });
 
     describe('Login all users', () => {
-        beforeEach(async () => {
-            for (const user of users) {
-                await request(server)
-                    .post('/auth/register')
-                    .send({
-                        email: user.email,
-                        password: user.password,
-                        role: user.role
-                    });
-            }
-        });
 
         it('should login all users and receive tokens', async () => {
             for (const user of users) {
@@ -66,8 +60,10 @@ describe('Auth Endpoints', () => {
                 expect(res.status).to.equal(200);
                 expect(res.body).to.have.property('accessToken');
                 expect(res.body).to.have.property('refreshToken');
-            }
-        });
+
+                // Store token
+                setToken(user.email, res.body.accessToken);
+            }});
     });
 
     describe('Refresh token', () => {
@@ -110,4 +106,7 @@ describe('Auth Endpoints', () => {
             expect(res.body).to.have.property('error', 'Refresh token is required');
         });
     });
+
+
 });
+

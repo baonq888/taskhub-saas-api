@@ -1,4 +1,5 @@
 import prisma from "../../../core/db/index.js";
+import {TaskStatus} from "@prisma/client";
 
 class TaskRepository {
   static async createTask(data) {
@@ -10,7 +11,7 @@ class TaskRepository {
       data: {
         taskId,
         userId,
-        status: "IN_PROGRESS",
+        status: TaskStatus.IN_PROGRESS,
       },
     });
   }
