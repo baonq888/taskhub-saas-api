@@ -6,13 +6,14 @@ const { verify } = pkg;
 
 async function authMiddlewareSocket(socket, next) {
   try {
-    const authHeader = socket.handshake.headers.authorization;
+    // Read token from socket handshake auth
+    const rawToken = socket.handshake.auth?.token;
+    const token = rawToken?.replace(/^Bearer\s/, "");
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!token) {
       return next(new Error("Authentication error: No or invalid token"));
     }
 
-    const token = authHeader.split(" ")[1];
     const decoded = verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
