@@ -16,7 +16,7 @@ class BoardService {
     return BoardRepository.getAllBoards();
   }
 
-  static async updateBoard(userId, id, data) {
+  static async updateBoard(id, userId, data) {
     const { projectId } = data;
     await ProjectAccessHelper.verifyUserInProject(userId, projectId);
     // Proceed with board update

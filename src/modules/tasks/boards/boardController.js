@@ -14,7 +14,8 @@ class BoardController {
 
   async getBoardById(req, res) {
     try {
-      const board = await BoardService.getBoardById(req.params.id);
+      const { boardId } = req.params;
+      const board = await BoardService.getBoardById(boardId);
       res.status(200).json(board);
     } catch (error) {
       res.status(404).json({ error: error.message });
@@ -32,9 +33,10 @@ class BoardController {
 
   async updateBoard(req, res) {
     try {
+      const { boardId } = req.params;
       const { data } = req.body;
       const userId = req.user.id;
-      const board = await BoardService.updateBoard(userId, data);
+      const board = await BoardService.updateBoard(boardId, userId, data);
       res.status(200).json(board);
     } catch (error) {
       res.status(400).json({ error: error.message });

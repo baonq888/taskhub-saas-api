@@ -148,7 +148,7 @@ router.get("/", authMiddleware, roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN
  *       500:
  *         description: Internal server error
  */
-router.put("/:id", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"), TaskController.updateTask);
+router.put("/:taskId", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"), TaskController.updateTask);
 
 
 /**
@@ -211,7 +211,7 @@ router.put("/:id", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWN
  *         description: Internal server error
  */
 router.patch(
-    "/:id",
+    "/:taskId",
     authMiddleware,
     roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
     TaskController.updateTaskStatus
@@ -240,7 +240,7 @@ router.patch(
  *       500:
  *         description: Internal server error
  */
-router.delete("/:id", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"), TaskController.deleteTask);
+router.delete("/:taskId", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"), TaskController.deleteTask);
 
 /**
  * @swagger
@@ -291,7 +291,7 @@ router.delete("/:id", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_
  */
 
 router.patch(
-    "/:id/assign",
+    "/:taskId/assign",
     authMiddleware,
     roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
     TaskController.assignTask
@@ -345,7 +345,7 @@ router.patch(
  *         description: Internal server error
  */
 router.delete(
-    "/:id/unassign",
+    "/:taskId/unassign",
     authMiddleware,
     roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
     TaskController.unassignTask

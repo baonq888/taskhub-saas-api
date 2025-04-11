@@ -27,14 +27,5 @@ export function getEntityId(entityType, key) {
     return testState[entityType]?.[key]?.id ?? null;
 }
 
-export function clearTestState() {
-    for (const key in testState) {
-        testState[key] = {};
-    }
-}
-
-export function getAllTestState() {
-    return testState;
-}
 
 export { testState };

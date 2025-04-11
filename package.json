@@ -7,8 +7,8 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "prisma:test:deploy": "dotenv -e .env.test -- prisma migrate deploy",
-    "test:rm": "docker compose rm test-db -s -f -v",
-    "test:up": "docker compose up test-db -d",
+    "test:rm": "docker compose rm test-db test-redis -s -f -v",
+    "test:up": "docker compose up test-db test-redis -d",
     "test:prepare": "npm run test:rm && npm run test:up && sleep 1 && npm run prisma:test:deploy",
     "test:e2e": "dotenv -e .env.test -- mocha test/e2e/*Tests.js --timeout 10000 --exit",
     "test": "npm run test:prepare && npm run test:e2e"

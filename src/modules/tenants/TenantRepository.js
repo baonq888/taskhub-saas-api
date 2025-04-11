@@ -10,6 +10,7 @@ class TenantRepository {
     });
   }
   static async createTenant(name, userId) {
+
     return prisma.$transaction(async (tx) => {
       const tenant = await tx.tenant.create({
         data: {name},
@@ -17,8 +18,8 @@ class TenantRepository {
 
       await tx.tenantUser.create({
         data: {
-          tenantId: tenant.id,
           userId,
+          tenantId: tenant.id,
           role: TenantRole.TENANT_OWNER,
         },
       });
@@ -29,7 +30,6 @@ class TenantRepository {
 
   static async updateTenantUserRole(tenantId, userId, newRole) {
 
-    // Update the role of the user in the tenant
     return prisma.tenantUser.update({
       where: {
         userId_tenantId: {userId, tenantId},
@@ -43,31 +43,17 @@ class TenantRepository {
   static async getTenantById(id) {
     return prisma.tenant.findUnique({
       where: {id},
-      include: {
-        users: {include: {user: true}},
-      },
+
     });
   }
 
-  static async inviteUser(tenantId, user, role = TenantRole.TENANT_MEMBER) {
-
-    // Check if the user is already in the tenant
-    const existingTenantUser = await prisma.tenantUser.findUnique({
-      where: {
-        userId_tenantId: { userId: user.id, tenantId }, // Composite primary key
-      },
-    });
-  
-    if (existingTenantUser) {
-      throw new Error("User is already a member of this tenant");
-    }
+  static async inviteUser(tenantId, user) {
   
     // Add the user to the tenant
     return prisma.tenantUser.create({
       data: {
         tenantId,
         userId: user.id,
-        role,
       },
     });
   }

@@ -92,6 +92,6 @@ router.get("/me", authMiddleware, UserController.getUserDetails);
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", authMiddleware, UserController.getUserById);
+router.get("/:userId", authMiddleware, UserController.getUserById);
 
 export default router;

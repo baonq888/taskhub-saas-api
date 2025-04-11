@@ -11,12 +11,11 @@ const authMiddleware = async (req, res, next) => {
 
     const decoded = verify(token, process.env.JWT_SECRET);
     req.user = { id: decoded.id };
-
     // Check if user roles are cached
     const cacheKey = `user_roles:${decoded.id}`;
     let userRoles = await redis.get(cacheKey);
 
-    if (!userRoles) {
+    if (!userRoles || !userRoles.tenantRoles || !userRoles.projectRoles) {
       // Fetch roles from database
       const tenantRoles = await prisma.tenantUser.findMany({
         where: { userId: decoded.id },
@@ -41,7 +40,6 @@ const authMiddleware = async (req, res, next) => {
 
     req.user.tenantRoles = userRoles.tenantRoles;
     req.user.projectRoles = userRoles.projectRoles;
-
     next();
   } catch (error) {
     res.status(403).json({ error: error.message });
