@@ -1,5 +1,4 @@
 import prisma from "../../../core/db/index.js";
-import {ProjectRole} from "@prisma/client";
 
 class ProjectRepository {
   static async createProject(data) {
@@ -42,12 +41,11 @@ class ProjectRepository {
     });
   }
 
-  static async inviteUserToProject(projectId, userId, role = ProjectRole.PROJECT_MEMBER) {
+  static async inviteUserToProject(projectId, userId) {
     return prisma.projectUser.create({
       data: {
         projectId,
         userId,
-        role,
       },
     });
   }

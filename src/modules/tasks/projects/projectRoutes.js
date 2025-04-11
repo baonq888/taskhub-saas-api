@@ -49,7 +49,7 @@ const router = express.Router({ mergeParams: true });
 router.post(
     "/",
     authMiddleware,
-    roleMiddleware(["TENANT_ADMIN"], "tenant"),
+    roleMiddleware(["TENANT_ADMIN"], ["tenant"]),
     ProjectController.createProject
 );
 
@@ -144,7 +144,7 @@ router.get("/:projectId", authMiddleware, ProjectController.getProjectById);
 router.put(
     "/:projectId",
     authMiddleware,
-    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], ["project"]),
     ProjectController.updateProject
 );
 
@@ -178,7 +178,7 @@ router.put(
 router.delete(
     "/:projectId",
     authMiddleware,
-    roleMiddleware(["PROJECT_OWNER"], "project"),
+    roleMiddleware(["PROJECT_OWNER"], ["project"]),
     ProjectController.deleteProject
 );
 
@@ -222,7 +222,7 @@ router.delete(
 router.post(
     "/:projectId/invite",
     authMiddleware,
-    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    roleMiddleware(["TENANT_ADMIN", "PROJECT_OWNER", "PROJECT_ADMIN"], ["tenant", "project"]),
     ProjectController.inviteUserToProject
 );
 
@@ -270,10 +270,10 @@ router.post(
  *       404:
  *         description: Not found
  */
-router.patch(
-    "/:tenantId/projects/:projectId/users/:userId/role",
+router.put(
+    "/:projectId/users/:userId/role",
     authMiddleware,
-    roleMiddleware(["PROJECT_OWNER"], "project"),
+    roleMiddleware(["TENANT_ADMIN", "PROJECT_OWNER", "PROJECT_ADMIN"], ["tenant", "project"]),
     ProjectController.updateProjectUserRole
 );
 

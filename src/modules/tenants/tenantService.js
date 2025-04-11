@@ -1,6 +1,7 @@
 import TenantRepository from "./TenantRepository.js";
 import UserRepository from "../auth/UserRepository.js";
 import {checkUserInTenant} from "../../core/helpers/EntityExistenceHelper.js";
+
 class TenantService {
   static async createTenant(userId, name) {
     // Check if the tenant already exists
@@ -32,6 +33,7 @@ class TenantService {
       const result = await TenantRepository.inviteUser(tenantId, user);
       invitedUsers.push(result);
     }
+
     return invitedUsers;
   }
 

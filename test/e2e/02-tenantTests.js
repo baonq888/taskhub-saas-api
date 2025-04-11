@@ -6,7 +6,6 @@ import { getToken } from './tokenStore.js';
 import { TenantRole } from '@prisma/client';
 import {
     setEntity,
-    getEntity,
     getEntityId
 } from './testState.js';
 import {API_VERSION} from "../testConfig.js";
@@ -54,7 +53,11 @@ describe('Tenant Endpoints', () => {
             const emails = [
                 'tenantadmin@gmail.com',
                 'tenantmember1@gmail.com',
-                'tenantmember2@gmail.com'
+                'tenantmember2@gmail.com',
+                'projectowner@gmail.com',
+                'projectadmin@gmail.com',
+                'projectmember1@gmail.com',
+                'projectmember2@gmail.com'
             ];
 
             const tenantId = getEntityId('tenants', tenantName);
@@ -76,7 +79,6 @@ describe('Tenant Endpoints', () => {
         it('should update user role in tenant', async () => {
             const tenantId = getEntityId('tenants', tenantName);
             const userId = getEntityId('users', emailToInvite);
-            console.log('user', getEntity('users', emailToInvite));
             const res = await request(server)
                 .patch(`${API_VERSION}/tenants/${tenantId}/users/${userId}/role`)
                 .set('Authorization', `Bearer ${getToken(email)}`)

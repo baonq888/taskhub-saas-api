@@ -38,6 +38,8 @@ class TenantRepository {
         role: newRole,
       },
     });
+
+
   }
 
   static async getTenantById(id) {

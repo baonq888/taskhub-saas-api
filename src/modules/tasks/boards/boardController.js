@@ -5,8 +5,8 @@ class BoardController {
     try {
       const { data } = req.body;
       const userId = req.user.id;
-      const Board = await BoardService.createBoard(userId, data);
-      res.status(201).json(Board);
+      const board = await BoardService.createBoard(userId, data);
+      res.status(201).json({message: "Board created", board});
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

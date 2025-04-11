@@ -45,9 +45,8 @@
 //
 //         expect(res.status).to.equal(201);
 //         expect(res.body).to.have.property('id');
-//         expect(res.body).to.have.property('name', taskName);
 //
-//         taskId = res.body.id;
+//         taskId = res.body.task.id;
 //         setEntity('tasks', taskName, { id: taskId });
 //     });
 //
