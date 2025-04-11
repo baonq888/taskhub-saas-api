@@ -2,10 +2,10 @@ import BoardRepository from "./BoardRepository.js";
 
 import ProjectAccessHelper from "../../../core/helpers/ProjectAccessHelper.js";
 class BoardService {
-  static async createBoard(userId, data) {
-    const { projectId } = data;
+  static async createBoard(projectId, userId, data) {
     await ProjectAccessHelper.verifyUserInProject(userId, projectId);
-    return BoardRepository.createBoard(data);
+    const boardData = { ...data, projectId };
+    return BoardRepository.createBoard(boardData);
   }
 
   static  async getBoardById(id) {
@@ -16,15 +16,14 @@ class BoardService {
     return BoardRepository.getAllBoards();
   }
 
-  static async updateBoard(id, userId, data) {
-    const { projectId } = data;
+  static async updateBoard(boardId, projectId, userId, data) {
     await ProjectAccessHelper.verifyUserInProject(userId, projectId);
     // Proceed with board update
-    return BoardRepository.updateBoard(id, data);
+    return BoardRepository.updateBoard(boardId, data);
   }
 
-  static async deleteBoard(id) {
-    return BoardRepository.deleteBoard(id);
+  static async deleteBoard(boardId) {
+    return BoardRepository.deleteBoard(boardId);
   }
 }
 

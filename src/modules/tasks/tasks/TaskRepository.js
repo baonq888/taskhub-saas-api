@@ -1,28 +1,22 @@
 import prisma from "../../../core/db/index.js";
-import {TaskStatus} from "@prisma/client";
 
 class TaskRepository {
   static async createTask(data) {
-    return prisma.task.create({ data });
+    return prisma.task.create({ data: data });
   }
 
   static async assignTask(taskId, userId) {
     return prisma.taskAssignee.create({
       data: {
-        taskId,
         userId,
-        status: TaskStatus.IN_PROGRESS,
+        taskId,
       },
     });
   }
 
   static async getTaskById(id) {
-    return prisma.task.findUnique({
+    return prisma.task.findFirst({
       where: { id },
-      include: {
-        assignees: { include: { user: true } },
-
-      },
     });
   }
 
@@ -34,10 +28,10 @@ class TaskRepository {
     });
   }
 
-  static async getAllTasks() {
+  static async getAllTasks(boardId) {
     return prisma.task.findMany({
-      include: {
-        assignees: { include: { user: true } }, // Include assigned users
+      where: {
+        boardId,
       },
     });
   }

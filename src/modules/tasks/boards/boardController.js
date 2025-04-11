@@ -3,11 +3,13 @@ import BoardService from "./boardService.js";
 class BoardController {
   async createBoard(req, res) {
     try {
-      const { data } = req.body;
+      const { projectId } = req.params;
+      const data  = req.body;
       const userId = req.user.id;
-      const board = await BoardService.createBoard(userId, data);
+      const board = await BoardService.createBoard(projectId, userId, data);
       res.status(201).json({message: "Board created", board});
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: error.message });
     }
   }
@@ -33,11 +35,11 @@ class BoardController {
 
   async updateBoard(req, res) {
     try {
-      const { boardId } = req.params;
-      const { data } = req.body;
+      const { projectId, boardId } = req.params;
+      const data = req.body;
       const userId = req.user.id;
-      const board = await BoardService.updateBoard(boardId, userId, data);
-      res.status(200).json(board);
+      const board = await BoardService.updateBoard(boardId, projectId, userId, data);
+      res.status(200).json({message: "Board Updated", board});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

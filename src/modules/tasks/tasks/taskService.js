@@ -1,12 +1,14 @@
 import TaskRepository from "./TaskRepository.js";
 import ProjectAccessHelper from "../../../core/helpers/ProjectAccessHelper.js";
 import {checkBoardExist, checkTaskExist} from "../../../core/helpers/EntityExistenceHelper.js";
+import {TaskStatus} from "@prisma/client";
 
 class TaskService {
-  static async createTask(userId, data) {
-    const board = await checkBoardExist(data.boardId);
+  static async createTask(boardId, userId, data) {
+    const board = await checkBoardExist(boardId);
     await ProjectAccessHelper.verifyUserInProject(userId, board.projectId);
-    return TaskRepository.createTask(data);
+    const taskData = {...data, boardId}
+    return await TaskRepository.createTask(taskData);
   }
 
   static async assignTask(taskId, assignedUserIds, projectAdminUserId) {
@@ -22,6 +24,8 @@ class TaskService {
         assignedUserIds,
         projectId
     );
+    await TaskRepository.updateTaskStatus(task.id, TaskStatus.IN_PROGRESS)
+
     return Promise.all(
         assignedUserIds.map(userId =>
             TaskRepository.assignTask(taskId, userId)
@@ -50,8 +54,7 @@ class TaskService {
   }
 
   static async getAllTasks(boardId) {
-    console.log(boardId)
-    return TaskRepository.getAllTasks();
+    return TaskRepository.getAllTasks(boardId);
   }
 
   static async updateTask(taskId, data) {
