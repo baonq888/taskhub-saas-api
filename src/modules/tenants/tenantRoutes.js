@@ -105,7 +105,7 @@ router.get("/:tenantId", authMiddleware, TenantController.getTenant);
 router.post(
     "/:tenantId/invite",
     authMiddleware,
-    roleMiddleware(["TENANT_ADMIN", "TENANT_OWNER"], "tenant"),
+    roleMiddleware(["TENANT_ADMIN", "TENANT_OWNER"], ["tenant"]),
     TenantController.inviteUsers
 );
 
@@ -170,7 +170,7 @@ router.get("/", authMiddleware, TenantController.listTenants);
 router.patch(
     "/:tenantId/users/:userId/role",
     authMiddleware,
-    roleMiddleware(["TENANT_OWNER"], "tenant"),
+    roleMiddleware(["TENANT_OWNER"], ["tenant"]),
     TenantController.updateTenantUserRole
 );
 

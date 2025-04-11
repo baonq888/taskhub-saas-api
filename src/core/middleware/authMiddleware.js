@@ -40,6 +40,7 @@ const authMiddleware = async (req, res, next) => {
 
     req.user.tenantRoles = userRoles.tenantRoles;
     req.user.projectRoles = userRoles.projectRoles;
+
     next();
   } catch (error) {
     res.status(403).json({ error: error.message });

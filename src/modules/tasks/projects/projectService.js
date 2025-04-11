@@ -17,6 +17,7 @@ class ProjectService {
     }
     // Check if a project with the same name already exists in the tenant
     await checkProjectExistsByName(tenantId, data.name);
+
     const projectData = { ...data, tenantId };
     const project = await ProjectRepository.createProject(projectData);
     await ChatRoomService.createChatRoomForProject(project.id);
@@ -52,7 +53,7 @@ class ProjectService {
     return ProjectRepository.deleteProject(projectId);
   }
  
-  static async inviteUsersToProject(projectId, tenantId, emails) {
+  static async inviteUsersToProject(tenantId, projectId,emails) {
     if (!Array.isArray(emails) || emails.length === 0) {
       throw new Error("Please provide a valid list of emails.");
     }
@@ -70,6 +71,7 @@ class ProjectService {
     await checkTenantExists(tenantId);
     // Invite each user to the project and add them to the chat room
     for (const user of users) {
+
       const tenantUser = await TenantService.getTenantUser(tenantId, user.id);
       if (!tenantUser) {
         throw new Error(`User with email ${user.email} is not a member of the tenant`);
@@ -81,8 +83,9 @@ class ProjectService {
       if (chatRoom) {
         await ChatParticipantService.addUserToChatRoom(chatRoom.id, user.id);
       }
+
     }
-  
+
     return { message: "Users invited to project and added to chat room" };
   }
 

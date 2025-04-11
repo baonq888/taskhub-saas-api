@@ -38,10 +38,10 @@ export async function checkProjectExists(projectId) {
 
 export async function checkProjectExistsByName(tenantId, projectName) {
     const existingProject = await ProjectRepository.getProjectByName(tenantId, projectName);
-    if (!existingProject) {
-        throw new Error(`Project with name "${projectName}" not found in tenant`);
+    if (existingProject) {
+        throw new Error(`Project with name "${projectName}" already in tenant`);
     }
-    return existingProject;
+    return true;
 }
 
 export async function checkTenantExists(tenantId) {
@@ -54,8 +54,8 @@ export async function checkTenantExists(tenantId) {
 
 export async function checkTenantExistsByName(name) {
     const tenant = await TenantRepository.getTenantByName(name);
-    if (!tenant) {
-        throw new Error(`Tenant with name "${name}" not found`);
+    if (tenant) {
+        throw new Error(`Tenant with name "${name}" already exists`);
     }
     return tenant;
 }

@@ -51,7 +51,7 @@ const router = express.Router({ mergeParams: true });
 router.post(
     "/",
     authMiddleware,
-    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], ["project"]),
     BoardController.createBoard
 );
 
@@ -98,7 +98,7 @@ router.post(
 router.get(
     "/:boardId",
     authMiddleware,
-    roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN", "PROJECT_OWNER"], ["project"]),
     BoardController.getBoardById
 );
 
@@ -139,7 +139,7 @@ router.get(
 router.get(
     "/",
     authMiddleware,
-    roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN", "PROJECT_OWNER"], ["project"]),
     BoardController.getAllBoards
 );
 
@@ -187,7 +187,7 @@ router.get(
 router.put(
     "/:boardId",
     authMiddleware,
-    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
+    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], ["project"]),
     BoardController.updateBoard
 );
 
@@ -222,7 +222,7 @@ router.put(
 router.delete(
     "/:boardId",
     authMiddleware,
-    roleMiddleware(["PROJECT_OWNER"], "project"),
+    roleMiddleware(["PROJECT_OWNER"], ["project"]),
     BoardController.deleteBoard
 );
 

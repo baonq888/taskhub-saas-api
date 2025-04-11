@@ -3,18 +3,18 @@ import prisma from "../../../core/db/index.js";
 
 class ChatRoomRepository {
     static async createChatRoom(projectId) {
-      return await prisma.chatRoom.create({ data: { projectId } });
+      return  prisma.chatRoom.create({ data: { projectId } });
     }
   
     static async findChatRoomByProject(projectId) {
-      return await prisma.chatRoom.findUnique({
+      return prisma.chatRoom.findFirst({
         where: { projectId },
         include: { messages: true, participants: true },
       });
     }
   
     static async addParticipant(chatRoomId, userId) {
-      return await prisma.chatParticipant.create({ data: { chatRoomId, userId } });
+      return prisma.chatParticipant.create({ data: { chatRoomId, userId } });
     }
   
     static async removeParticipant(chatRoomId, userId) {
@@ -24,11 +24,11 @@ class ChatRoomRepository {
     }
   
     static async addMessage(chatRoomId, senderId, content) {
-      return await prisma.message.create({ data: { chatRoomId, senderId, content } });
+      return prisma.message.create({ data: { chatRoomId, senderId, content } });
     }
   
     static async getMessages(chatRoomId) {
-      return await prisma.message.findMany({
+      return prisma.message.findMany({
         where: { chatRoomId },
         orderBy: { createdAt: "asc" },
       });

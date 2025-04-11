@@ -6,7 +6,7 @@ class ProjectController {
       const { tenantId } = req.params;
       const data = req.body;
       const project = await ProjectService.createProject(tenantId, data);
-      res.status(201).json(project);
+      res.status(201).json({ message: "Project created", project });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -37,7 +37,7 @@ class ProjectController {
       const { tenantId, projectId } = req.params;
       const data = req.body
       const project = await ProjectService.updateProject(tenantId, projectId, data);
-      res.status(200).json(project);
+      res.status(200).json({message: "Project updated", project});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -55,11 +55,13 @@ class ProjectController {
 
   static async inviteUserToProject(req, res) {
     try {
+
       const { tenantId, projectId } = req.params;
       const { emails } = req.body;
       const result = await ProjectService.inviteUsersToProject(tenantId, projectId, emails);
       res.status(200).json(result);
     } catch (error) {
+      console.log(error);
       res.status(400).json({ error: error.message });
     }
   }
