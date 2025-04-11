@@ -15,20 +15,32 @@ function setupOnlineStatus(io) {
 
         socket.on("join_project", async ({ projectId: projId }) => {
             projectId = projId;
-            socket.join(projectId);
 
-            await redis.sadd(onlineUsersKey(projectId), userId);
-            const users = await redis.smembers(onlineUsersKey(projectId));
+            try {
+                await socket.join(projectId); // Wait for joining
+                await redis.sadd(onlineUsersKey(projectId), userId);
+                const users = await redis.smembers(onlineUsersKey(projectId));
 
-            presenceNamespace.to(projectId).emit("user_online", users);
+                // Log who's online for debugging
+                console.log(`[server] user ${userId} joined ${projectId}`);
+                console.log(`[server] online users in ${projectId}:`, users);
+
+                presenceNamespace.to(projectId).emit("user_online", users);
+            } catch (err) {
+                console.error("Error in join_project:", err.message);
+            }
         });
 
         socket.on("disconnect", async () => {
-            if (projectId) {
+            try {
+                if (!projectId) return;
+
                 await redis.srem(onlineUsersKey(projectId), userId);
                 const users = await redis.smembers(onlineUsersKey(projectId));
 
                 presenceNamespace.to(projectId).emit("user_online", users);
+            } catch (err) {
+                console.error("Error on disconnect:", err.message);
             }
         });
     });
