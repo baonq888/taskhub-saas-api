@@ -41,7 +41,6 @@ const router = express.Router();
 router.post(
     "/",
     authMiddleware,
-    roleMiddleware(["TENANT_ADMIN", "TENANT_OWNER"], "tenant"),
     TenantController.createTenant
 );
 
@@ -66,7 +65,7 @@ router.post(
  *       404:
  *         description: Tenant not found
  */
-router.get("/:id", authMiddleware, TenantController.getTenant);
+router.get("/:tenantId", authMiddleware, TenantController.getTenant);
 
 /**
  * @swagger
@@ -104,7 +103,7 @@ router.get("/:id", authMiddleware, TenantController.getTenant);
  *         description: Forbidden
  */
 router.post(
-    "/:id/invite",
+    "/:tenantId/invite",
     authMiddleware,
     roleMiddleware(["TENANT_ADMIN", "TENANT_OWNER"], "tenant"),
     TenantController.inviteUsers
@@ -168,8 +167,8 @@ router.get("/", authMiddleware, TenantController.listTenants);
  *       404:
  *         description: User not found
  */
-router.put(
-    "/:id/users/:userId/role",
+router.patch(
+    "/:tenantId/users/:userId/role",
     authMiddleware,
     roleMiddleware(["TENANT_OWNER"], "tenant"),
     TenantController.updateTenantUserRole

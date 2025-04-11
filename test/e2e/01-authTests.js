@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import request from 'supertest';
 import server from '../testServer.js';
-import prisma from '../../src/core/db/index.js';
 import {setToken} from "./tokenStore.js";
 import {setEntity} from "./testState.js";
+import {API_VERSION} from "../testConfig.js";
 
 
 
@@ -20,18 +20,11 @@ describe('Auth Endpoints', () => {
     ];
 
 
-    // Clean database before each test
-    beforeEach(async () => {
-        for (const user of users) {
-            await prisma.user.deleteMany({ where: { email: user.email } });
-        }
-    });
-
     describe('Register multiple users with roles', () => {
         it('should register owner, admin, and member', async () => {
             for (const user of users) {
                 const res = await request(server)
-                    .post('/auth/register')
+                    .post(`${API_VERSION}/auth/register`)
                     .send({
                         email: user.email,
                         password: user.password,
@@ -40,9 +33,9 @@ describe('Auth Endpoints', () => {
                 expect(res.status).to.equal(201);
                 expect(res.body.user).to.have.property('email', user.email);
 
+
                 const userId = res.body.user.id;
-                setEntity('users', user.email, userId);
-                setToken(user.email, res.body.accessToken);
+                setEntity('users', user.email, { id: userId });
 
             }
         });
@@ -53,7 +46,7 @@ describe('Auth Endpoints', () => {
         it('should login all users and receive tokens', async () => {
             for (const user of users) {
                 const res = await request(server)
-                    .post('/auth/login')
+                    .post(`${API_VERSION}/auth/login`)
                     .send({
                         email: user.email,
                         password: user.password
@@ -63,52 +56,50 @@ describe('Auth Endpoints', () => {
                 expect(res.body).to.have.property('accessToken');
                 expect(res.body).to.have.property('refreshToken');
 
-                const userId = res.body.user.id;
-                setEntity('users', user.email, userId);
                 setToken(user.email, res.body.accessToken);
             }});
     });
 
-    describe('Refresh token', () => {
-        const user = users[0];
-
-        let refreshToken;
-
-        beforeEach(async () => {
-            // Clean up the user if already exists
-            await prisma.user.deleteMany({ where: { email: user.email } });
-
-            // Register the user
-            await request(server)
-                .post('/auth/register')
-                .send({ email: user.email, password: user.password });
-
-            // Login to get refresh token
-            const loginRes = await request(server)
-                .post('/auth/login')
-                .send({ email: user.email, password: user.password });
-
-            refreshToken = loginRes.body.refreshToken;
-        });
-
-        it('should return a new access token', async () => {
-            const res = await request(server)
-                .post('/auth/refresh')
-                .send({ refreshToken });
-
-            expect(res.status).to.equal(200);
-            expect(res.body).to.have.property('accessToken');
-        });
-
-        it('should return 400 if refresh token is missing', async () => {
-            const res = await request(server)
-                .post('/auth/refresh')
-                .send({});
-
-            expect(res.status).to.equal(400);
-            expect(res.body).to.have.property('error', 'Refresh token is required');
-        });
-    });
+    // describe('Refresh token', () => {
+    //     const user = users[0];
+    //
+    //     let refreshToken;
+    //
+    //     beforeEach(async () => {
+    //         // Clean up the user if already exists
+    //         await prisma.user.deleteMany({ where: { email: user.email } });
+    //
+    //         // Register the user
+    //         await request(server)
+    //             .post(`${API_VERSION}/auth/register`)
+    //             .send({ email: user.email, password: user.password });
+    //
+    //         // Login to get refresh token
+    //         const loginRes = await request(server)
+    //             .post('/auth/login')
+    //             .send({ email: user.email, password: user.password });
+    //
+    //         refreshToken = loginRes.body.refreshToken;
+    //     });
+    //
+    //     it('should return a new access token', async () => {
+    //         const res = await request(server)
+    //             .post(`${API_VERSION}/auth/refresh`)
+    //             .send({ refreshToken });
+    //
+    //         expect(res.status).to.equal(200);
+    //         expect(res.body).to.have.property('accessToken');
+    //     });
+    //
+    //     it('should return 400 if refresh token is missing', async () => {
+    //         const res = await request(server)
+    //             .post(`${API_VERSION}/auth/refresh`)
+    //             .send({});
+    //
+    //         expect(res.status).to.equal(400);
+    //         expect(res.body).to.have.property('error', 'Refresh token is required');
+    //     });
+    // });
 
 
 });

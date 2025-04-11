@@ -1,5 +1,6 @@
 import TenantRepository from "./TenantRepository.js";
 import UserRepository from "../auth/UserRepository.js";
+import {checkUserInTenant} from "../../core/helpers/EntityExistenceHelper.js";
 class TenantService {
   static async createTenant(userId, name) {
     // Check if the tenant already exists
@@ -42,6 +43,8 @@ class TenantService {
     if (!["TENANT_MEMBER", "TENANT_ADMIN", "TENANT_OWNER"].includes(newRole)) {
       throw new Error("Invalid role");
     }
+    // check user belongs to tenant
+    await checkUserInTenant(userId, tenantId);
     return await TenantRepository.updateTenantUserRole(tenantId, userId, newRole);
   }
 }

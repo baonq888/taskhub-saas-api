@@ -96,7 +96,7 @@ router.post(
  *                   example: "Board for to-do tasks"
  */
 router.get(
-    "/:id",
+    "/:boardId",
     authMiddleware,
     roleMiddleware(["PROJECT_MEMBER", "PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
     BoardController.getBoardById
@@ -185,7 +185,7 @@ router.get(
  *         description: Board not found
  */
 router.put(
-    "/:id",
+    "/:boardId",
     authMiddleware,
     roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], "project"),
     BoardController.updateBoard
@@ -220,7 +220,7 @@ router.put(
  *         description: Board not found
  */
 router.delete(
-    "/:id",
+    "/:boardId",
     authMiddleware,
     roleMiddleware(["PROJECT_OWNER"], "project"),
     BoardController.deleteBoard
