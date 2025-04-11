@@ -3,11 +3,13 @@ import TaskService from "./taskService.js";
 class TaskController {
   static async createTask(req, res) {
     try {
-      const data = req.body
+      const { boardId } = req.params;
+      const { data } = req.body
       const userId = req.user.id;
-      const task = await TaskService.createTask(userId, data);
-      res.status(201).json(task);
+      const task = await TaskService.createTask(boardId, userId, data);
+      res.status(201).json({message: "Task Created", task});
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: error.message });
     }
   }
@@ -61,9 +63,9 @@ class TaskController {
   static async updateTask(req, res) {
     try {
       const { taskId } = req.params
-      const data = req.body;
+      const {data} = req.body;
       const task = await TaskService.updateTask(taskId, data);
-      res.status(200).json(task);
+      res.status(200).json({message: "Task Updated", task});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
@@ -72,7 +74,7 @@ class TaskController {
   static async updateTaskStatus(req, res) {
     try {
       const { taskId } = req.params;
-      const { status } = req.body;
+      const {status} = req.body;
 
       const task = await TaskService.updateTaskStatus(taskId, status);
       res.status(200).json(task);

@@ -18,8 +18,6 @@ const roleMiddleware = (requiredRoles, scopes = ["tenant"]) => {
         roleCheckResults.push(requiredRoles.includes(userProjectRole));
       }
 
-
-
       if (roleCheckResults.some(Boolean)) {
         return next();
       }
