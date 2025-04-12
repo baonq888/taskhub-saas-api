@@ -39,7 +39,6 @@ describe('User online status socket gateway', () => {
     });
 
     it('should allow multiple users to join the same project room', function (done) {
-        this.timeout(15000); // Increase timeout to 15s
 
         const users = [
             'projectadmin@gmail.com',
@@ -72,8 +71,6 @@ describe('User online status socket gateway', () => {
             });
 
             client.on('user_online', async (userList) => {
-                console.log(`[client ${email}] received user_online with:`, userList);
-
                 receivedFrom.add(email);
 
                 // Assert only runs after all clients received user_online
@@ -137,7 +134,6 @@ describe('User online status socket gateway', () => {
             setTimeout(async () => {
                 try {
                     const redisUsers = await redis.smembers(onlineUsersKey);
-                    console.log('Redis users after disconnect:', redisUsers);
                     expect(redisUsers).to.not.include(userId.toString());
                     done();
                 } catch (err) {
