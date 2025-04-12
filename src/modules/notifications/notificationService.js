@@ -1,19 +1,20 @@
-import NotificationRepository from "./NotificationRepository.js";
-
 class NotificationService {
+  constructor(notificationRepository) {
+    this.notificationRepository = notificationRepository;
+  }
+
   async sendNotification(userId, message, type = "TASK_DEADLINE") {
-    await NotificationRepository.createNotification(userId, type, message);
+    await this.notificationRepository.createNotification(userId, type, message);
     console.log(`Notification sent to User ${userId}: ${message}`);
   }
 
   async getUserNotifications(userId) {
-    return await NotificationRepository.getUserNotifications(userId);
+    return await this.notificationRepository.getUserNotifications(userId);
   }
 
   async markAsRead(notificationId) {
-    return await NotificationRepository.markNotificationAsRead(notificationId);
+    return await this.notificationRepository.markNotificationAsRead(notificationId);
   }
 }
 
-const notificationService = new NotificationService();
-export default notificationService;
+export default NotificationService;

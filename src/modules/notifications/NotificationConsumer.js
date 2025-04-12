@@ -1,17 +1,16 @@
-import { connectRabbitMQ } from "../../infrastructure/messaging/rabbitmq.js";
-import notificationService from "./notificationService.js";
+// NotificationConsumer.js
 
-export async function consumeNotificationEvent() {
+export async function consumeNotificationEvent({connectRabbitMQ, sendNotification, queueName = "notifications_queue"}) {
     try {
         const channel = await connectRabbitMQ();
 
-        await channel.assertQueue("notifications_queue", { durable: true });
-        console.log("Waiting for messages in notifications_queue...");
+        await channel.assertQueue(queueName, { durable: true });
+        console.log(`Waiting for messages in ${queueName}...`);
 
-        channel.consume("notifications_queue", async (msg) => {
+        channel.consume(queueName, async (msg) => {
             if (msg !== null) {
                 const { userId, message, type } = JSON.parse(msg.content.toString());
-                await notificationService.sendNotification(userId, message, type);
+                await sendNotification(userId, message, type);
                 channel.ack(msg);
             }
         });
