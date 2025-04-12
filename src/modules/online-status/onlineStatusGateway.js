@@ -21,10 +21,6 @@ function setupOnlineStatus(io) {
                 await redis.sadd(onlineUsersKey(projectId), userId);
                 const users = await redis.smembers(onlineUsersKey(projectId));
 
-                // Log who's online for debugging
-                console.log(`[server] user ${userId} joined ${projectId}`);
-                console.log(`[server] online users in ${projectId}:`, users);
-
                 presenceNamespace.to(projectId).emit("user_online", users);
             } catch (err) {
                 console.error("Error in join_project:", err.message);

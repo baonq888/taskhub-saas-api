@@ -11,7 +11,7 @@
     "test:up": "docker compose up test-db redis -d",
     "test:prepare": "npm run test:rm && npm run test:up && sleep 1 && npm run prisma:test:deploy",
     "test:e2e": "dotenv -e .env.test -- mocha test/e2e/*Tests.js --timeout 10000 --exit",
-    "test": "npm run test:prepare && npm run test:e2e"
+    "test": "npm run test:prepare && npm run test:e2e && npm run test:rm"
   },
   "author": "",
   "license": "ISC",

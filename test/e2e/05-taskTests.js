@@ -30,89 +30,106 @@ describe('Task Endpoints', () => {
         }
     });
 
-    it('should create a new task', async () => {
-        const token = getToken(email);
-        const taskData = {
-            title: taskName,
-            description: 'Test task creation',
-            deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // Adds 2 days
-        };
+    describe('Create Task', () => {
+        it('should create a new task', async () => {
+            const token = getToken(email);
+            const taskData = {
+                title: taskName,
+                description: 'Test task creation',
+                deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // Adds 2 days
+            };
 
-        const res = await request(server)
-            .post(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks`)
-            .set('Authorization', `Bearer ${token}`)
-            .send({ data: taskData });
+            const res = await request(server)
+                .post(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks`)
+                .set('Authorization', `Bearer ${token}`)
+                .send({ data: taskData });
 
-        expect(res.status).to.equal(201);
+            expect(res.status).to.equal(201);
 
-        taskId = res.body.task.id;
-        setEntity('tasks', taskName, { id: taskId });
-    });
+            taskId = res.body.task.id;
+            setEntity('tasks', taskName, { id: taskId });
+        });
+    })
 
-    it('should get the task by ID', async () => {
-        const res = await request(server)
-            .get(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}`)
-            .set('Authorization', `Bearer ${getToken(email)}`);
+    describe('Get Task by ID', () => {
+        it('should get the task by ID', async () => {
+            const res = await request(server)
+                .get(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}`)
+                .set('Authorization', `Bearer ${getToken(email)}`);
 
-        expect(res.status).to.equal(200);
-    });
+            expect(res.status).to.equal(200);
+        });
+    })
 
-    it('should update the task status by Project Member 1', async () => {
-        const statusUpdate = { status: TaskStatus.DONE };
+    describe('Update Task status', () => {
+        it('should update the task status by Project Member 1', async () => {
+            const statusUpdate = { status: TaskStatus.DONE };
 
-        const res = await request(server)
-            .put(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/status`)
-            .set('Authorization', `Bearer ${getToken(projectMember1Email)}`)
-            .send(statusUpdate);
+            const res = await request(server)
+                .put(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/status`)
+                .set('Authorization', `Bearer ${getToken(projectMember1Email)}`)
+                .send(statusUpdate);
 
-        expect(res.status).to.equal(200);
-    });
+            expect(res.status).to.equal(200);
+        });
+    })
 
-    it('should update the task', async () => {
-        const updatedTitle = `${taskName} Updated`;
+    describe('Update Task data', () => {
+        it('should update the task', async () => {
+            const updatedTitle = `${taskName} Updated`;
 
-        const res = await request(server)
-            .put(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}`)
-            .set('Authorization', `Bearer ${getToken(email)}`)
-            .send({ data: { title: updatedTitle } });
+            const res = await request(server)
+                .put(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}`)
+                .set('Authorization', `Bearer ${getToken(email)}`)
+                .send({ data: { title: updatedTitle } });
 
-        expect(res.status).to.equal(200);
-    });
+            expect(res.status).to.equal(200);
+        });
+    })
 
-    it('should get all tasks in the board', async () => {
-        const res = await request(server)
-            .get(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks`)
-            .set('Authorization', `Bearer ${getToken(email)}`);
+    describe('Get all tasks in the board', () => {
+        it('should get all tasks in the board', async () => {
+            const res = await request(server)
+                .get(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks`)
+                .set('Authorization', `Bearer ${getToken(email)}`);
 
-        expect(res.status).to.equal(200);
+            expect(res.status).to.equal(200);
 
-    });
+        });
+    })
 
-    it('should assign users to the task', async () => {
-        const userIds = [
-            getEntityId('users', projectMember1Email),
-            getEntityId('users', projectMember2Email)
-        ];
+   describe('Assign users to the task', () => {
+       it('should assign users to the task', async () => {
+           const userIds = [
+               getEntityId('users', projectMember1Email),
+               getEntityId('users', projectMember2Email)
+           ];
 
-        const res = await request(server)
-            .post(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/assign`)
-            .set('Authorization', `Bearer ${getToken(email)}`)
-            .send({ userIds });
+           const res = await request(server)
+               .post(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/assign`)
+               .set('Authorization', `Bearer ${getToken(email)}`)
+               .send({ userIds });
 
-        expect(res.status).to.equal(200);
-    });
+           expect(res.status).to.equal(200);
+       });
 
-    it('should unassign users from the task', async () => {
-        const userIds = [
-            getEntityId('users', projectMember1Email)
-        ];
+   })
 
-        const res = await request(server)
-            .delete(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/unassign`)
-            .set('Authorization', `Bearer ${getToken(email)}`)
-            .send({ userIds });
+    describe('Unassign users to the task', () => {
+        it('should unassign users from the task', async () => {
+            const userIds = [
+                getEntityId('users', projectMember1Email)
+            ];
 
-        expect(res.status).to.equal(200);
-    });
+            const res = await request(server)
+                .delete(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/unassign`)
+                .set('Authorization', `Bearer ${getToken(email)}`)
+                .send({ userIds });
+
+            expect(res.status).to.equal(200);
+        });
+    })
+
+
 
 });
