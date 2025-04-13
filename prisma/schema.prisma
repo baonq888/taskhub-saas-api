@@ -32,6 +32,10 @@ model User {
   ProjectUser ProjectUser[]
 
   TaskAssignee TaskAssignee[]
+
+  Comment Comment[]
+
+  Attachment Attachment[]
 }
 
 model TenantUser {
@@ -117,6 +121,8 @@ model Task {
 
   board        Board          @relation(fields: [boardId], references: [id], onDelete: Cascade)
   TaskAssignee TaskAssignee[]
+  Comment      Comment[]
+  Attachment   Attachment[]
 
   @@unique([boardId, title])
   @@index([deadline])
@@ -139,6 +145,31 @@ enum TaskStatus {
   TODO
   IN_PROGRESS
   DONE
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Attachment {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  fileName  String
+  fileUrl   String
+  mimeType  String?
+  size      Int?
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {
