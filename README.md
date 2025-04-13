@@ -9,7 +9,7 @@ TaskHub is a **Jira/Trello-like** project management system designed for **multi
 - **Cache & Queues:** Redis 
 - **Authentication:** JWT & OAuth2
 - **Message Broker:** RabbitMQ 
-- **Storage:** Firebase Storage
+- **Storage:** Supabase Storage
 
 ## Features
 - Multi-Tenant Architecture (Shared DB, Row-Level Security)  
@@ -18,7 +18,7 @@ TaskHub is a **Jira/Trello-like** project management system designed for **multi
 - Real-Time Updates (WebSockets)  
 - Activity Logs & Notifications  
 - API Rate Limiting & Caching  
-- File Uploads via Firebase Storage  
+- File Uploads via Supabase Storage  
 
 ## Installation & Setup
 
