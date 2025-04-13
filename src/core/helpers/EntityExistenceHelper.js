@@ -73,3 +73,12 @@ export async function checkUserInProject(userId, projectId) {
     }
     return user;
 }
+
+// Check if a user exists in a specific task
+export async function checkUserInTask(userId, taskId) {
+    const assignee = await TaskRepository.getTaskAssignee(taskId, userId);
+    if (!assignee) {
+        throw new Error("User is not assigned to this task");
+    }
+    return assignee;
+}
