@@ -58,6 +58,25 @@ class TaskRepository {
     });
   }
 
+  static async getTaskAssignees(taskId) {
+    return prisma.taskAssignee.findMany({
+      where: {
+        taskId,
+      },
+
+    });
+  }
+
+  static async getTaskAssignee(taskId, userId) {
+    return prisma.taskAssignee.findFirst({
+      where: {
+        taskId,
+        userId,
+      },
+
+    });
+  }
+
   static async deleteTask(id) {
     return prisma.task.delete({ where: { id } });
   }
