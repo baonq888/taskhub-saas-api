@@ -14,7 +14,7 @@ const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
- * /comments:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{taskId}/comments:
  *   post:
  *     summary: Create a new comment
  *     tags: [Comments]
@@ -52,7 +52,7 @@ router.post(
 
 /**
  * @swagger
- * task/{taskId}/comments:
+ * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{taskId}/comments:
  *   get:
  *     summary: Get all comments for a task
  *     tags: [Comments]

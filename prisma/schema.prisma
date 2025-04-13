@@ -163,7 +163,7 @@ model Attachment {
   taskId    String
   userId    String
   fileName  String
-  fileUrl   String
+  filePath  String
   mimeType  String?
   size      Int?
   createdAt DateTime @default(now())
