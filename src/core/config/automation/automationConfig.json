@@ -1,0 +1,107 @@
+{
+    "triggers": [
+        {
+            "id": "1",
+            "name": "task_created",
+            "description": "Triggered when a new task is created."
+        },
+        {
+            "id": "2",
+            "name": "task_deadline_approaching",
+            "description": "Triggered when a task's deadline is approaching."
+        },
+        {
+            "id": "3",
+            "name": "task_updated",
+            "description": "Triggered when an existing task is updated."
+        }
+    ],
+
+    "actions": [
+        {
+            "id": "1",
+            "name": "assign_user",
+            "description": "Assign a user to the task.",
+            "action_options": [
+                "assign_board_owner",
+                "assign_project_admin",
+                "assign_specific_user",
+                "assign_evenly"
+            ]
+        },
+        {
+            "id": "2",
+            "name": "notify_user",
+            "description": "Send a notification to the user.",
+            "action_options": []
+        }
+],
+
+    "strategies": {
+        "assign_board_owner": {
+            "description": "Assign the task to the board owner.",
+                "applicable_action": "assign_user"
+        },
+        "assign_project_admin": {
+            "description": "Assign the task to the project admin.",
+                "applicable_action": "assign_user"
+        },
+        "assign_specific_user": {
+            "description": "Assign the task to a specified user.",
+                "applicable_action": "assign_user"
+        },
+        "assign_evenly": {
+            "description": "Distribute tasks evenly to a list of users in a round-robin fashion.",
+                "applicable_action": "assign_user"
+        }
+    },
+
+    "conditions": [
+        {
+            "id": "1",
+            "name": "board_id_equals",
+            "description": "Check if the task is in a specific board.",
+            "type": "task",
+            "field": "boardId"
+        },
+        {
+            "id": "2",
+            "name": "task_status_equals",
+            "description": "Check if the task has a specific status.",
+            "type": "task",
+            "field": "status"
+        },
+        {
+            "id": "3",
+            "name": "deadline_approaching",
+            "description": "Check if the task is approaching its deadline.",
+            "type": "task",
+            "field": "deadline"
+        },
+        {
+            "id": "4",
+            "name": "user_role_equals",
+            "description": "Check if the user has a specific role in the project or tenant.",
+            "type": "user",
+            "field": "role"
+        }
+    ],
+    "example_rules": [
+        {
+            "id": "3",
+            "trigger": "task_created",
+            "conditions": [
+                {
+                    "condition": "board_id_equals",
+                    "value": "board-2"
+                }
+            ],
+            "action": "assign_user",
+            "actionPayload": {
+                "strategy": "assign_evenly",
+                "userGroup": ["user1", "user2", "user3"]
+            },
+            "enabled": true
+        }
+    ]
+}
