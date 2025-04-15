@@ -7,6 +7,7 @@ import taskRoutes from "../modules/tasks/tasks/taskRoutes.js";
 import chatRoutes from "../modules/chat/chatRoutes.js";
 import commentRoute from "../modules/comments/commentRoute.js";
 import attachmentRoute from "../modules/attachments/attachmentRoute.js";
+import automationRoute from "../modules/automation/automationRoute.js";
 
 const API_VERSION = "/api/v1";
 
@@ -20,4 +21,6 @@ export default function routeLoader(app) {
     app.use(`${API_VERSION}/tenants/:tenantId/projects/:projectId/boards/:boardId/tasks/:taskId/comments`, commentRoute);
     app.use(`${API_VERSION}/tenants/:tenantId/projects/:projectId/boards/:boardId/tasks/:taskId/attachments`, attachmentRoute);
     app.use(`${API_VERSION}/tenants/:tenantId/projects/:projectId/chat`, chatRoutes);
+    app.use(`${API_VERSION}/tenants/:tenantId`, automationRoute);
+
 }
