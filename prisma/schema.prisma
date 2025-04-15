@@ -13,6 +13,8 @@ model Tenant {
   createdAt DateTime     @default(now())
   users     TenantUser[]
   projects  Project[]
+
+  AutomationRule AutomationRule[]
 }
 
 model User {
@@ -71,10 +73,11 @@ model Project {
   tenantId  String
   createdAt DateTime @default(now())
 
-  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  boards      Board[]
-  ChatRoom    ChatRoom[]
-  ProjectUser ProjectUser[]
+  tenant         Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  boards         Board[]
+  ChatRoom       ChatRoom[]
+  ProjectUser    ProjectUser[]
+  AutomationRule AutomationRule[]
 
   @@unique([tenantId, name])
 }
@@ -104,8 +107,9 @@ model Board {
   projectId String
   createdAt DateTime @default(now())
 
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tasks   Task[]
+  project        Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks          Task[]
+  AutomationRule AutomationRule[]
 
   @@unique([projectId, name])
 }
@@ -228,4 +232,29 @@ model Message {
 
   chatRoom ChatRoom @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
   sender   User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model AutomationRule {
+  id        String  @id @default(uuid())
+  tenantId  String
+  projectId String? // Optional: Rule specific to a project
+  boardId   String? // Optional: Rule specific to a board
+
+  name          String
+  description   String?
+  trigger       String // E.g., "task_created", "task_status_updated"
+  conditions    Json? // Optional filters, e.g., { "status": "TODO" }
+  actionType    String // E.g., "assign_user", "notify_user"
+  actionPayload Json // Data needed for the action
+  enabled       Boolean @default(true)
+
+  createdAt DateTime @default(now())
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  board   Board?   @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([projectId])
+  @@index([boardId])
 }
