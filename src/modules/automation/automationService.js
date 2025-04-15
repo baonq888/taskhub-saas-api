@@ -16,6 +16,11 @@ class AutomationService {
         });
     }
 
+    static async hasActiveRules({ trigger, projectId }) {
+        const rules = await AutomationRepository.findByProject(projectId);
+        return rules.some(rule => rule.trigger === trigger && rule.enabled);
+    }
+
     static async getRulesByTenant(tenantId) {
         return AutomationRepository.findByTenant(tenantId);
     }

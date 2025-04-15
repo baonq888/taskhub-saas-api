@@ -1,4 +1,8 @@
 import TaskService from "./taskService.js";
+import { RabbitMQEventBus } from '../../../infrastructure/messaging/RabbitMQEventBus.js';
+import {TRIGGERS} from "../../../core/config/automation/automationConstants.js";
+
+const eventBus = new RabbitMQEventBus();
 
 class TaskController {
   static async createTask(req, res) {
@@ -7,6 +11,13 @@ class TaskController {
       const { data } = req.body
       const userId = req.user.id;
       const task = await TaskService.createTask(boardId, userId, data);
+
+      await eventBus.publish({
+        name: TRIGGERS.TASK_CREATED,
+        user: req.user,
+        task,
+      });
+
       res.status(201).json({message: "Task Created", task});
     } catch (error) {
       console.log(error);
