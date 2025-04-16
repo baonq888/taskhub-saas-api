@@ -242,8 +242,8 @@ model AutomationRule {
   description   String?
   trigger       String
   conditions    Json?
-  actionType    String
-  actionPayload Json
+  actionType    String // type of automation action to perform
+  actionPayload Json // parameter for actionType
   enabled       Boolean @default(true)
 
   createdAt DateTime @default(now())
