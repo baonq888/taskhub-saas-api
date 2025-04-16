@@ -13,7 +13,6 @@ export function evaluateConditions(conditions = [], context = {}) {
                 case 'task_priority_equals':
                     if (task.priority !== value) return false;
                     break;
-                // add more task-related conditions here
                 default:
                     return false;
             }
@@ -29,7 +28,6 @@ export function evaluateConditions(conditions = [], context = {}) {
                 case 'board_title_equals':
                     if (board.title !== value) return false;
                     break;
-                // add more board-related conditions here
                 default:
                     return false;
             }
