@@ -1,8 +1,9 @@
 import AutomationService from './automationService.js';
 import { evaluateConditions } from './helpers/evaluateConditions.js';
+import {ACTIONS,} from "../../core/config/automation/automationConstants.js";
+import {executeAssignUser, executeMoveToBoard, executeNotifyUser} from "./helpers/executeActionHelper.js";
 
 export class AutomationEngine {
-
     async handleTrigger(trigger, automationContext) {
         const rules = await AutomationService.getRulesByProject(automationContext.projectId);
         // apply only enabled conditions
@@ -15,16 +16,24 @@ export class AutomationEngine {
         }
     }
 
-    async executeAction(action, payload, automationContext) {
+    async executeAction(action, ruleActionPayload, automationContext) {
+        const { task, user } = automationContext;
+
         switch (action) {
-            case 'assign_user':
-                // implement assignment logic
+            case ACTIONS.ASSIGN_USER:
+                await executeAssignUser(task, ruleActionPayload, user);
                 break;
-            case 'notify_user':
-                // implement notification logic
+
+            case ACTIONS.NOTIFY_USER:
+                await executeNotifyUser(task, ruleActionPayload);
                 break;
+
+            case ACTIONS.MOVE_TO_BOARD:
+                await executeMoveToBoard(task, ruleActionPayload);
+                break;
+
             default:
-                console.warn('Unknown action:', action);
+                console.warn("Unknown action:", action);
         }
     }
 }

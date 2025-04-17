@@ -12,6 +12,10 @@ class BoardService {
     return BoardRepository.getBoardById(id);
   }
 
+  static async getBoardByName(projectId, name) {
+    return BoardRepository.getBoardByName(projectId, name);
+  }
+
   static async getAllBoards() {
     return BoardRepository.getAllBoards();
   }

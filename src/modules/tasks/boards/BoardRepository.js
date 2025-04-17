@@ -12,6 +12,15 @@ class BoardRepository {
     });
   }
 
+  static async getBoardByName(projectId, name) {
+    return prisma.board.findFirst({
+      where: {
+        projectId,
+        name,
+      },
+    });
+  }
+
 
   static async getAllBoards() {
     return prisma.board.findMany();

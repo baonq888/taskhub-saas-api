@@ -98,8 +98,7 @@
             ],
             "action": "assign_user",
             "actionPayload": {
-                "strategy": "assign_evenly",
-                "userGroup": ["user1", "user2", "user3"]
+                "strategy": "assign_evenly"
             },
             "enabled": true
         }

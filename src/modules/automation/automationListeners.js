@@ -19,4 +19,20 @@ export async function registerAutomationListeners() {
         const automationContext = buildAutomationContext(TRIGGERS.TASK_CREATED, { user, task });
         await engine.handleTrigger(TRIGGERS.TASK_CREATED, automationContext);
     });
+
+    await eventBus.subscribe(TRIGGERS.TASK_UPDATED, async ({ user, task }) => {
+        const hasRules = await AutomationService.hasActiveRules({
+            trigger: TRIGGERS.TASK_UPDATED,
+            projectId: task.projectId,
+        });
+
+        if (!hasRules) return;
+
+        const automationContext = buildAutomationContext(TRIGGERS.TASK_UPDATED, {
+            user,
+            task,
+        });
+
+        await engine.handleTrigger(TRIGGERS.TASK_UPDATED, automationContext);
+    });
 }

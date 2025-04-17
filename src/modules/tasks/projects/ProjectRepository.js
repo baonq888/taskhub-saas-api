@@ -34,7 +34,6 @@ class ProjectRepository {
   }
 
 
-
   static async deleteProject(projectId) {
     return prisma.project.delete({
       where: { id: projectId },
@@ -68,6 +67,16 @@ class ProjectRepository {
       },
     });
   }
+
+  static async getProjectUsersByRole(projectId, role) {
+    return prisma.projectUser.findMany({
+      where: {
+        projectId,
+        role
+      }
+    });
+  }
+
 }
 
 export default ProjectRepository;
