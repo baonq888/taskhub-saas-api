@@ -101,6 +101,18 @@ class ProjectService {
     await checkUserInProject(userId, projectId);
     await ProjectRepository.updateProjectUserRole(projectId, userId, newRole)
   }
+
+  static async getProjectUsersByRole(projectId, role) {
+    if (!projectId || !role) {
+      throw new Error("projectId and role are required");
+    }
+    if (!Object.values(ProjectRole).includes(role)) {
+      throw new Error("Invalid project role");
+    }
+
+    await checkProjectExists(projectId);
+    return ProjectRepository.getProjectUsersByRole(projectId, role);
+  }
 }
 
 export default ProjectService;

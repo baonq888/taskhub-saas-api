@@ -1,5 +1,3 @@
-// NotificationConsumer.js
-
 export async function consumeNotificationEvent({connectRabbitMQ, sendNotification, queueName = "notifications_queue"}) {
     try {
         const channel = await connectRabbitMQ();

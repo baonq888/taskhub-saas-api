@@ -17,6 +17,15 @@ class TaskRepository {
   static async getTaskById(id) {
     return prisma.task.findFirst({
       where: { id },
+      include: {
+        board: {
+          select: {
+            id: true,
+            projectId: true,
+            name: true
+          }
+        }
+      }
     });
   }
 
