@@ -10,7 +10,7 @@ import {
 import { API_VERSION } from '../testConfig.js';
 
 describe('Comment Endpoints', () => {
-    const email = 'taskmember@gmail.com';
+    const email = 'projectmember1@gmail.com';
     const tenantName = 'QB Corp';
     const projectName = 'QB Project';
     const boardName = `${projectName} Board`;

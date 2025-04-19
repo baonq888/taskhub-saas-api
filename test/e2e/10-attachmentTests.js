@@ -26,7 +26,7 @@ describe('Attachment Endpoints', () => {
 
     describe('Upload Attachment', () => {
         it('should upload a file for a task', async () => {
-            const testFilePath = path.join(__dirname, 'files', fileName);
+            const testFilePath = path.join(__dirname, '..', 'files', fileName);
 
             const res = await request(server)
                 .post(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/attachments`)
