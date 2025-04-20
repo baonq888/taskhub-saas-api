@@ -1,6 +1,12 @@
 import Redis from "ioredis";
 
-const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+const redis = new Redis({
+    host: "redis",
+    port: 6379,
+    retryStrategy(times) {
+        return Math.min(times * 50, 2000); // Retry every 50ms
+    }
+});
 
 redis.on("connect", () => {
     console.log("Connected to Redis");
