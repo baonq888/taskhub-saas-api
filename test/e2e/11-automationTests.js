@@ -8,7 +8,7 @@
 // import {ACTIONS, CONDITIONS, STRATEGIES, TRIGGERS} from "../../src/core/config/automation/automationConstants.js";
 //
 // describe('Automation Endpoints', () => {
-//     const email = 'taskmember@gmail.com';
+//     const email = 'projectadmin@gmail.com';
 //     const tenantName = 'QB Corp';
 //     const projectName = 'QB Project';
 //     const boardName = `${projectName} Board`;

@@ -1,7 +1,10 @@
 import express from "express";
 import initLoaders from "./loader/index.js";
 import dotenv from "dotenv";
-dotenv.config();
+
+dotenv.config({
+    path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
 
 const app = express();
 

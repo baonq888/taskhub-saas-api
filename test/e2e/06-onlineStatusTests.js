@@ -6,7 +6,7 @@ import { getEntityId } from './testState.js';
 import { getToken } from './tokenStore.js';
 import server from '../testServer.js';
 import { PRESENCE_PORT as PORT, PRESENCE_URL as URL } from '../testConfig.js';
-import redis from "../../src/core/redis/redisClient.js";
+import redis from "../../src/infrastructure/redis/redisClient.js";
 
 describe('User online status socket gateway', () => {
     let io;

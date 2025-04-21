@@ -1,7 +1,6 @@
 import authMiddlewareSocket from "../../core/middleware/authMiddlewareSocket.js";
-import Redis from "ioredis";
+import redis from "../../infrastructure/redis/redisClient.js";
 
-const redis = new Redis();
 const onlineUsersKey = (projectId) => `onlineUsers:${projectId}`;
 
 function setupOnlineStatus(io) {

@@ -4,8 +4,28 @@ import server from '../testServer.js';
 import {setToken} from "./tokenStore.js";
 import {setEntity} from "./testState.js";
 import {API_VERSION} from "../testConfig.js";
+import prisma from '../../src/infrastructure/db/index.js'; // adjust path if needed
 
+async function clearDatabase() {
+    await prisma.message.deleteMany();
+    await prisma.chatParticipant.deleteMany();
+    await prisma.chatRoom.deleteMany();
+    await prisma.notification.deleteMany();
+    await prisma.taskAssignee.deleteMany();
+    await prisma.task.deleteMany();
+    await prisma.board.deleteMany();
+    await prisma.projectUser.deleteMany();
+    await prisma.project.deleteMany();
+    await prisma.tenantUser.deleteMany();
+    await prisma.tenant.deleteMany();
+    await prisma.userDetail.deleteMany();
+    await prisma.refreshToken.deleteMany();
+    await prisma.user.deleteMany();
+}
 
+before(async () => {
+    await clearDatabase();
+});
 
 describe('Auth Endpoints', () => {
     const users = [

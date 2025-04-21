@@ -6,6 +6,7 @@ class AttachmentsController {
         try {
             const { taskId } = req.body;
             const userId = req.user.id;
+            console.log("file", req.file);
             const { originalFileName, mimetype, size, buffer } = req.file;
             const data = {
                 taskId,
