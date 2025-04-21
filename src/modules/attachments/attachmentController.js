@@ -6,12 +6,12 @@ class AttachmentsController {
         try {
             const { taskId } = req.body;
             const userId = req.user.id;
-            console.log("file", req.file);
-            const { originalFileName, mimetype, size, buffer } = req.file;
+            const { originalname, mimetype, size, buffer } = req.file;
+
             const data = {
                 taskId,
                 userId,
-                originalName: originalFileName,
+                originalName: originalname,
                 mimeType: mimetype,
                 size,
             }
@@ -25,20 +25,6 @@ class AttachmentsController {
         }
     }
 
-    static async downloadAttachment(req, res) {
-        try {
-            const { attachmentId } = req.params;
-            const { stream, fileName, mimeType } = await AttachmentsService.downloadAttachment(attachmentId);
-
-            res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-            res.setHeader('Content-Type', mimeType);
-
-            stream.pipe(res);
-        } catch (error) {
-            console.error('Download failed:', error.message);
-            return errorResponse(res, 500, 'Failed to download attachment', error.message);
-        }
-    }
 
     static async getAttachmentsByTask(req, res) {
         try {
@@ -52,10 +38,11 @@ class AttachmentsController {
 
     static async deleteAttachment(req, res) {
         try {
-            const { id } = req.params;
-            await AttachmentsService.deleteAttachment(id);
+            const { attachmentId } = req.params;
+            await AttachmentsService.deleteAttachment(attachmentId);
             return successResponse(res, 204, 'Attachment deleted successfully');
         } catch (error) {
+            console.error('Upload failed:', error.message);
             return errorResponse(res, 500, 'Failed to delete attachment', error.message);
         }
     }

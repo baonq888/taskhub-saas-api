@@ -37,7 +37,6 @@ describe('Attachment Endpoints', () => {
     describe('Upload Attachment', () => {
         it('should upload a file for a task', async () => {
             const testFilePath = path.join(__dirname, '..', 'files', fileName);
-            console.log("testFilePath", testFilePath);
             const res = await request(server)
                 .post(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/attachments`)
                 .set('Authorization', `Bearer ${getToken(email)}`)
@@ -45,7 +44,7 @@ describe('Attachment Endpoints', () => {
                 .attach('file', testFilePath);
 
             expect(res.status).to.equal(201)
-            setEntity('attachments', 'Sample File', { id: res.body.id });
+            setEntity('attachments', 'Sample File', { id: res.body.data.id });
         });
     });
 
@@ -60,29 +59,10 @@ describe('Attachment Endpoints', () => {
         });
     });
 
-    describe('Download Attachment', () => {
-        it('should download an uploaded attachment', async () => {
-            const attachmentId = getEntityId('attachments', 'Sample File').id;
-
-            const res = await request(server)
-                .get(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/attachments/${attachmentId}/download`)
-                .set('Authorization', `Bearer ${getToken(email)}`)
-                .buffer()
-                .parse((res, callback) => {
-                    res.setEncoding('binary');
-                    res.data = '';
-                    res.on('data', chunk => res.data += chunk);
-                    res.on('end', () => callback(null, Buffer.from(res.data, 'binary')));
-                });
-
-            expect(res.status).to.equal(200);
-
-        });
-    });
 
     describe('Delete Attachment', () => {
         it('should delete an attachment by ID', async () => {
-            const attachmentId = getEntityId('attachments', 'Sample File').id;
+            const attachmentId = getEntityId('attachments', 'Sample File');
             const res = await request(server)
                 .delete(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/attachments/${attachmentId}`)
                 .set('Authorization', `Bearer ${getToken(email)}`);
