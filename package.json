@@ -10,9 +10,9 @@
     "prisma:test:deploy": "dotenv -e .env.test -- prisma migrate deploy",
     "test:rm": "docker compose rm test-db redis rabbitmq app -s -f -v",
     "test:up": "docker compose up test-db redis rabbitmq app -d",
-    "test:prepare": "npm run test:rm && npm run test:up && sleep 1 && npm run prisma:test:generate && npm run prisma:test:deploy",
+    "test:prepare": "sleep 1 && npm run prisma:test:generate && npm run prisma:test:deploy",
     "test:e2e": "dotenv -e .env.test -- mocha test/e2e/*Tests.js --timeout 10000 --exit",
-    "test": "npm run test:prepare && npm run test:e2e && npm run test:rm"
+    "test": "npm run test:prepare && npm run test:e2e"
   },
   "author": "",
   "license": "ISC",

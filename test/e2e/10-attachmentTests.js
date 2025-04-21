@@ -5,7 +5,11 @@ import server from '../testServer.js';
 import { getToken } from './tokenStore.js';
 import { API_VERSION } from '../testConfig.js';
 import { setEntity, getEntityId } from './testState.js';
-import prisma from '../../src/core/db/index.js';
+import prisma from '../../src/infrastructure/db/index.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 describe('Attachment Endpoints', () => {
     const email = 'projectadmin@gmail.com';
@@ -13,13 +17,19 @@ describe('Attachment Endpoints', () => {
     const projectName = 'QB Project';
     const boardName = `${projectName} Board`;
     const taskName = 'Initial Task';
-    const taskId = getEntityId('tasks', taskName);
-    const tenantId = getEntityId('tenants', tenantName);
-    const projectId = getEntityId('projects', projectName);
-    const boardId = getEntityId('boards', boardName);
-    const fileName = 'image.jpg'
+    const fileName = 'image.jpg';
+    let tenantId, projectId, boardId, taskId;
 
     before(async () => {
+        taskId = getEntityId('tasks', taskName);
+        tenantId = getEntityId('tenants', tenantName);
+        projectId = getEntityId('projects', projectName);
+        boardId = getEntityId('boards', boardName);
+
+        if (!tenantId || !projectId || !boardId || !taskId) {
+            throw new Error('Missing tenant, project, board ID, or task ID');
+        }
+
         await prisma.attachment.deleteMany({});
 
     });
@@ -27,7 +37,7 @@ describe('Attachment Endpoints', () => {
     describe('Upload Attachment', () => {
         it('should upload a file for a task', async () => {
             const testFilePath = path.join(__dirname, '..', 'files', fileName);
-
+            console.log("testFilePath", testFilePath);
             const res = await request(server)
                 .post(`${API_VERSION}/tenants/${tenantId}/projects/${projectId}/boards/${boardId}/tasks/${taskId}/attachments`)
                 .set('Authorization', `Bearer ${getToken(email)}`)

@@ -1,5 +1,5 @@
 import pkg from "jsonwebtoken";
-import prisma from "../db/index.js";
+import prisma from "../../infrastructure/db/index.js";
 import redis from "../../infrastructure/redis/redisClient.js";
 
 const { verify } = pkg;

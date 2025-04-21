@@ -1,4 +1,4 @@
-import prisma from "../../../core/db/index.js";
+import prisma from "../../../infrastructure/db/index.js";
 
 class ChatParticipantRepository {
   static async addParticipant(chatRoomId, userId) {

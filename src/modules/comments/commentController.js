@@ -8,9 +8,9 @@ class CommentController {
             const { taskId } = req.params;
             const userId = req.user.id;
             const { content } = req.body;
-            const comment = await CommentService.createComment({ taskId, userId, content });
+            const comment = await CommentService.createComment(userId, taskId, content);
 
-            return successResponse(res, 201, 'Comment created successfully', { comment });
+            return successResponse(res, 201, 'Comment created successfully', {comment});
 
         } catch (error) {
             console.error('Error creating comment:', error);
@@ -23,7 +23,7 @@ class CommentController {
             const { taskId } = req.params;
             const comments = await CommentService.getCommentsByTask(taskId);
 
-            return successResponse(res, 200, 'Comments retrieved successfully', { comments });
+            return successResponse(res, 200, 'Comments retrieved successfully', {comments});
 
         } catch (error) {
             console.error('Error fetching comments:', error);

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import request from 'supertest';
 import server from '../testServer.js';
-import prisma from '../../src/core/db/index.js';
+import prisma from '../../src/infrastructure/db/index.js';
 import { getToken } from './tokenStore.js';
 import { TenantRole } from '@prisma/client';
 import {

@@ -1,4 +1,4 @@
-import prisma from '../../core/db/index.js';
+import prisma from '../../infrastructure/db/index.js';
 
 class CommentRepository {
     async createComment({ taskId, userId, content }) {

@@ -1,6 +1,7 @@
 import TenantRepository from "./TenantRepository.js";
 import UserRepository from "../auth/UserRepository.js";
 import {checkUserInTenant} from "../../core/helpers/EntityExistenceHelper.js";
+import redis from "../../infrastructure/redis/redisClient.js";
 
 class TenantService {
   static async createTenant(userId, name) {
@@ -24,15 +25,22 @@ class TenantService {
 
   static async inviteUsers(tenantId, emails) {
     const invitedUsers = [];
+    const userIds = [];
     for (const email of emails) {
       const user = await UserRepository.findUserByEmail(email);
       if (!user) {
         console.warn(`User with email ${email} not found, skipping.`);
         continue;
       }
+      userIds.push(user?.id);
       const result = await TenantRepository.inviteUser(tenantId, user);
       invitedUsers.push(result);
     }
+
+    // Invalidate user roles cache
+    const pipeline = redis.pipeline();
+    userIds.forEach(id => pipeline.del(`user_roles:${id}`));
+    await pipeline.exec();
 
     return invitedUsers;
   }

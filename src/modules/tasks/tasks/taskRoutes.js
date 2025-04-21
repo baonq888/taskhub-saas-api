@@ -49,7 +49,11 @@ const router = express.Router({ mergeParams: true });
  *       500:
  *         description: Internal server error
  */
-router.post("/", authMiddleware, roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], ["project"]), TaskController.createTask);
+router.post(
+    "/",
+    authMiddleware,
+    roleMiddleware(["PROJECT_ADMIN", "PROJECT_OWNER"], ["project"]),
+    TaskController.createTask);
 
 /**
  * @swagger

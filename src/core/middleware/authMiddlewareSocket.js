@@ -1,6 +1,6 @@
 import pkg from "jsonwebtoken";
 import redis from "../../infrastructure/redis/redisClient.js";
-import prisma from "../db/index.js";
+import prisma from "../../infrastructure/db/index.js";
 
 const { verify } = pkg;
 

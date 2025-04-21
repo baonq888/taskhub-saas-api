@@ -19,6 +19,7 @@ const roleMiddleware = (requiredRoles, scopes = ["tenant"]) => {
       }
 
       if (roleCheckResults.some(Boolean)) {
+
         return next();
       }
 

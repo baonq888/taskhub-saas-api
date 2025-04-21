@@ -1,4 +1,4 @@
-import prisma from "../../core/db/index.js";
+import prisma from "../../infrastructure/db/index.js";
 import { subDays, startOfDay, endOfDay } from "date-fns";
 
 const DAYS_BEFORE_DEADLINE = 3;

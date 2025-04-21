@@ -9,6 +9,7 @@ import {
   checkTenantExists, checkUserExist, checkUserInProject, checkUserInTenant
 } from "../../../core/helpers/EntityExistenceHelper.js";
 import {ProjectRole} from "@prisma/client";
+import redis from "../../../infrastructure/redis/redisClient.js";
 
 class ProjectService {
   static async createProject(tenantId, data) {
@@ -58,6 +59,7 @@ class ProjectService {
       throw new Error("Please provide a valid list of emails.");
     }
     const users = [];
+    const userIds = [];
     for (const email of emails) {
       const user = await UserRepository.findUserByEmail(email); 
       if (!user) {
@@ -76,6 +78,7 @@ class ProjectService {
       if (!tenantUser) {
         throw new Error(`User with email ${user.email} is not a member of the tenant`);
       }
+      userIds.push(user.id);
       // Invite user to project
       await ProjectRepository.inviteUserToProject(projectId, user.id);
       // Add user to chat room participants
@@ -85,6 +88,11 @@ class ProjectService {
       }
 
     }
+
+    // Invalidate user roles cache
+    const pipeline = redis.pipeline();
+    userIds.forEach(id => pipeline.del(`user_roles:${id}`));
+    await pipeline.exec();
 
     return { message: "Users invited to project and added to chat room" };
   }
