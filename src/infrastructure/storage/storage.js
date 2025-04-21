@@ -1,7 +1,8 @@
 import supabase from './supabase.js';
-import BUCKETS from "./bucketConfig.js"; // Import the Supabase client
+import { getBucket } from "./bucketConfig.js";
 
-export function uploadFile(fileBuffer, filePath, contentType, bucket = BUCKETS.DEV) {
+export function uploadFile(fileBuffer, filePath, contentType) {
+    const bucket = getBucket();
     return supabase.storage
         .from(bucket)
         .upload(filePath, fileBuffer, {
@@ -23,21 +24,20 @@ export function uploadFile(fileBuffer, filePath, contentType, bucket = BUCKETS.D
         });
 }
 
-export function downloadFile(filePath, bucket = BUCKETS.DEV) {
+export function deleteFile(filePath) {
+    const bucket = getBucket();
     return supabase.storage
         .from(bucket)
-        .download(filePath)
+        .remove([filePath])
         .then(({ data, error }) => {
             if (error) {
                 throw error;
             }
+            console.log(`File "${filePath}" deleted from "${bucket}"`);
             return data;
         })
         .catch((error) => {
-            console.error('Error downloading file:', error.message);
+            console.error('Error deleting file:', error.message);
             throw new Error(error.message);
-        })
-        .finally(() => {
-            console.log('Download attempt completed');
         });
 }

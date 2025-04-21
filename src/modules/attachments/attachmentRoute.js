@@ -1,9 +1,13 @@
 import express from "express";
-import AttachmentController from "./AttachmentController.js"; // Make sure to update this to the correct path
+import AttachmentController from "./AttachmentController.js";
 import authMiddleware from "../../core/middleware/authMiddleware.js";
 import roleMiddleware from "../../core/middleware/roleMiddleware.js";
-
+import multer from "multer";
 const router = express.Router({ mergeParams: true });
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 
 /**
  * @swagger
@@ -54,6 +58,7 @@ router.post(
     "/",
     authMiddleware,
     roleMiddleware(["PROJECT_OWNER", "PROJECT_ADMIN", "PROJECT_MEMBER"], ["project"]),
+    upload.single("file"),
     AttachmentController.uploadAttachment
 );
 
@@ -121,40 +126,5 @@ router.delete(
     AttachmentController.deleteAttachment
 );
 
-/**
- * @swagger
- * /tenants/{tenantId}/projects/{projectId}/boards/{boardId}/tasks/{taskId}/attachments/{attachmentId}/download:
- *   get:
- *     summary: Download an attachment by its ID
- *     tags: [Attachments]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: taskId
- *         required: true
- *         schema:
- *           type: string
- *         description: Task ID
- *       - in: path
- *         name: attachmentId
- *         required: true
- *         schema:
- *           type: string
- *         description: Attachment ID
- *     responses:
- *       200:
- *         description: File download initiated
- *       404:
- *         description: Attachment not found
- *       401:
- *         description: Unauthorized
- */
-router.get(
-    "/:attachmentId/download",
-    authMiddleware,
-    roleMiddleware(["PROJECT_OWNER", "PROJECT_ADMIN", "PROJECT_MEMBER"], ["project"]),
-    AttachmentController.downloadAttachment
-);
 
 export default router;
